@@ -1,0 +1,60 @@
+---
+title: this.bind(), this.apply() and this.call()
+date: 2022-05-12T01:00:00Z
+image: /images/posts/bind.png
+categories: ["javaScript"]
+featured: true
+draft: false
+---
+
+# Introduction
+
+Hello, community 🙌🏻,
+
+JavaScript provides several ways to invoke a function, and among them are the methods bind(), call() and apply(). These methods are used to set the value of the this keyword inside a function, and they are particularly useful when working with objects and constructors. In this blog post, we'll take a closer look at each of these methods, how they work, and when to use them.
+
+# 1. bind()
+
+The bind() method creates a new function with a specific value for this. It does not call the function, it just creates a new function with a permanently bound this value. To use bind(), you pass in the value you want this to reference and it returns a new function with the this keyword set to the value you provided.
+
+```js
+let obj = {
+  name: "John",
+  sayName: function () {
+    console.log(this.name);
+  },
+};
+
+let boundSayName = obj.sayName.bind(obj);
+boundSayName(); // Output: John
+```
+
+In this example, we have an object obj with a property name and a method sayName. We use bind() to create a new function boundSayName that has this set to obj. This means that when we call boundSayName(), this.name will be equal to "John".
+
+# 2. call()
+
+The call() method is used to call a function with a specific value for this. It also allows you to pass in arguments one by one. To use call(), you pass in the value you want this to reference and the arguments for the function.
+
+```js
+let obj = { name: "John" };
+let obj2 = { name: "Bob" };
+
+obj.sayName.call(obj2); // Output: Bob
+```
+
+In this example, we are calling the sayName method on the obj object and passing in obj2 as the value for this. This means that when the sayName method is called, this.name will be equal to "Bob".
+
+# 3. apply()
+
+The apply() method is similar to call(), but it allows you to pass in an array of arguments. To use apply(), you pass in the value you want this to reference and an array of arguments for the function.
+
+```js
+let numbers = [1, 2, 3];
+console.log(Math.max.apply(null, numbers)); // Output: 3
+```
+
+In this example, we are using the apply() method to call the Math.max function and passing in an array of numbers as the arguments. The first argument is null because we don't need to set the value of this.
+
+# Summary
+
+In summary, bind(), call(), and apply() are powerful tools in JavaScript that allow you to set the value of this inside a function. bind() creates a new function with a permanently bound this value, call() is used to call a function with a specific value for this, and apply() is used to call a function with a specific value for this and pass in an array of arguments. Knowing when to use each of these methods can help you write more efficient and maintainable code.

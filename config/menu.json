@@ -1,0 +1,38 @@
+{
+  "main": [
+    {
+      "name": "Home",
+      "url": "/"
+    },
+    {
+      "name": "About",
+      "url": "/about"
+    },
+    {
+      "name": "Posts",
+      "url": "/posts"
+    },
+    {
+      "name": "Categories",
+      "url": "/categories"
+    }
+  ],
+  "footer": [
+    {
+      "name": "Home",
+      "url": "/"
+    },
+    {
+      "name": "About",
+      "url": "/about"
+    },
+    {
+      "name": "Posts",
+      "url": "/posts"
+    },
+    {
+      "name": "categories",
+      "url": "/categories"
+    }
+  ]
+}
