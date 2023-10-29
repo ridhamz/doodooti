@@ -14,6 +14,23 @@ import Sidebar from "./partials/Sidebar";
 import shortcodes from "./shortcodes/all";
 const { disqus } = config;
 const { meta_author } = config.metadata;
+import Markdown from "react-markdown";
+import SyntaxHighlighter from "react-syntax-highlighter";
+
+function code({ className, ...props }) {
+  return <SyntaxHighlighter PreTag="div" {...props} />;
+  const match = /language-(\w+)/.exec(className || "");
+  return match ? (
+    <SyntaxHighlighter
+      language={match[1]}
+      PreTag="div"
+      {...props}
+      style={{ border: "1px solid red" }}
+    />
+  ) : (
+    <code className={className} {...props} />
+  );
+}
 
 const PostSingle = ({
   frontmatter,
@@ -74,7 +91,7 @@ const PostSingle = ({
                     <InnerPagination posts={posts} date={date} />
                   </div>
                 )}
-                {markdownify(title, "h1", "lg:text-[42px] mt-4")}
+                {markdownify(title, "h3", "lg:text-[42px] mt-4")}
                 <ul className="flex items-center space-x-4">
                   <li>
                     <Link
@@ -90,8 +107,8 @@ const PostSingle = ({
                     {dateFormat(date)}
                   </li>
                 </ul>
-                <div className="content mb-16">
-                  <MDXRemote {...mdxContent} components={shortcodes} />
+                <div className="content">
+                  <MDXRemote {...mdxContent} components={{ code }} />
                 </div>
                 {config.settings.InnerPaginationOptions.enableBottom && (
                   <InnerPagination posts={posts} date={date} />
@@ -116,14 +133,14 @@ const PostSingle = ({
 
         {/* Related posts */}
         <div className="container mt-20">
-          <h2 className="section-title">Related Posts</h2>
+          {/* <h2 className="section-title">Related Posts</h2>
           <div className="row mt-16">
             {relatedPosts.slice(0, 3).map((post, index) => (
               <div key={"post-" + index} className="mb-12 lg:col-4">
                 <Post post={post} />
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
       </section>
     </Base>

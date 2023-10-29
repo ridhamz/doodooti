@@ -2,9 +2,9 @@
   "site": {
     "title": "doodooti",
     "base_url": "/",
-    "favicon": "/images/logo1.png",
-    "logo": "/images/logo1.png",
-    "logo_white": "/images/logo1.png",
+    "favicon": "/images/logo-img.png",
+    "logo": "/images/logo-img.png",
+    "logo_white": "/images/logo-img.png",
     "logo_width": "50",
     "logo_height": " ",
     "logo_text": "doodooti"
@@ -12,7 +12,7 @@
   "settings": {
     "theme_switcher": true,
     "default_theme": "system",
-    "pagination": 6,
+    "pagination": 3,
     "InnerPaginationOptions": {
       "enableTop": false,
       "enableBottom": true

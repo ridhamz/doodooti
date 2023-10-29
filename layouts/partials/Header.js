@@ -30,7 +30,7 @@ const Header = () => {
   }, [showMenu]);
 
   return (
-    <header className="header">
+    <header className="header fixed top-0 w-full bg-white shadow-sm">
       <nav className="navbar container px-1 sm:px-8">
         <div className="order-0">
           <Logo />
@@ -112,7 +112,7 @@ const Header = () => {
             {/* header social */}
             <Social source={socical} className="socials" />
           </div>
-         {/*  <ThemeSwitcher /> */}
+          {/*  <ThemeSwitcher /> */}
           {/* Header search */}
           <div
             className="search-icon"

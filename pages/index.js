@@ -112,11 +112,6 @@ const Home = ({
                 </div>
               )}
 
-              <Pagination
-                totalPages={Math.ceil(posts.length / 3)}
-                currentPage={1}
-              />
-
               <Contact />
             </div>
             {/* sidebar 

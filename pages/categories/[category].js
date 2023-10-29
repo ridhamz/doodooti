@@ -11,16 +11,16 @@ const { blog_folder } = config.settings;
 const Category = ({ postsByCategories, category, posts, categories }) => {
   return (
     <Base title={category}>
-      <div className="section mt-16">
+      <div className="section mt-8">
         <div className="container">
-          <h1 className="h2 mb-12">
+          <h1 className="h2 mb-8 text-center">
             Showing posts from
             <span className="section-title ml-1 inline-block capitalize">
               {category.replace("-", " ")}
             </span>
           </h1>
           <div className="row">
-            <div className="lg:col-8">
+            <div className="lg:col-12">
               <div className="row rounded border border-border p-4 px-3 dark:border-darkmode-border lg:p-6">
                 {postsByCategories.map((post, i) => (
                   <div key={`key-${i}`} className="col-12 mb-8 sm:col-6">
@@ -29,7 +29,7 @@ const Category = ({ postsByCategories, category, posts, categories }) => {
                 ))}
               </div>
             </div>
-            <Sidebar posts={posts} categories={categories} />
+            {/* <Sidebar posts={posts} categories={categories} /> */}
           </div>
         </div>
       </div>
@@ -64,7 +64,7 @@ export const getStaticProps = ({ params }) => {
 
   const categoriesWithPostsCount = categories.map((category) => {
     const filteredPosts = posts.filter((post) =>
-      post.frontmatter.categories.map(e => slugify(e)).includes(category)
+      post.frontmatter.categories.map((e) => slugify(e)).includes(category)
     );
     return {
       name: category,
