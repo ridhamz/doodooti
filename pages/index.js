@@ -131,7 +131,7 @@ export default Home;
 
 // for homepage data
 export const getStaticProps = async () => {
-  const homepage = await getListPage("content/_index.md");
+  const homepage = await getListPage("content/_index.mdx");
   const { frontmatter } = homepage;
   const { banner, featured_posts, recent_posts, promotion } = frontmatter;
   const posts = getSinglePage(`content/${blog_folder}`);

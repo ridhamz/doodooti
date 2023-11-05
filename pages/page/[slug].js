@@ -20,11 +20,11 @@ const BlogPagination = ({ postIndex, posts, currentPage, pagination }) => {
   return (
     <Base title={title}>
       <section className="section">
-        <div className="container">
+        <div className="container mt-4">
           {markdownify(title, "h1", "h2 mb-8 text-center")}
-          <div className="row mb-16">
+          <div className="row mb-8">
             {currentPosts.map((post, i) => (
-              <div className="mt-16 lg:col-4" key={post.slug}>
+              <div className="mt-8 lg:col-4" key={post.slug}>
                 <Post post={post} />
               </div>
             ))}
