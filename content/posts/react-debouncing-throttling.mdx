@@ -7,7 +7,7 @@ featured: true
 draft: false
 ---
 
-# Introduction
+### Introduction
 
 Hello, community 🙌🏻,
 
@@ -19,7 +19,7 @@ When it comes to debouncing and throttling, developers often confuse.
 
 During this blog, I will go throw these two techniques in details using react.js, but it is the same principle for vanilla JavaScript or any other JavaScript framework.
 
-# Debouncing
+### Debouncing
 
 Before dive deep into debouncing, let's see a simple and normal example that implement a search box that allows users to search something without clicking any button.
 
@@ -62,7 +62,7 @@ The idea is to define a high-order function called debounce takes as arguments a
 The secret here is that every call of the function returned from the debounce function will cancel the previous timer using cleartimeout(timer) and start a new timer.
 With this approach, we can be sure that the callback function will be executed just once after the time that we passed as an argument in the last call.
 
-# Implement debounce function into our example
+### Implement debounce function into our example
 
 ```js
 <div className="App">
@@ -73,11 +73,11 @@ With this approach, we can be sure that the callback function will be executed j
 </div>
 ```
 
-## Result
+#### Result
 
 ![Maple](/images/posts/r-d-t/1.gif)
 
-# Throttling
+### Throttling
 
 Let's assume that we have an event listener in our app to track the movement of the user mouse, then send data to a backend server to do some operations based on the location of the mouse.
 
@@ -97,7 +97,7 @@ If we stick with this solution, we will end up with a down backend server becaus
 1600 API calls in few seconds is very very bad 📛📛📛.
 To fix this issue, we need to limit the number of API calls, and this kind of problems can be solved using a throttle function.
 
-# Definition and implementation of a throttle function
+#### Definition and implementation of a throttle function
 
 A throttle function is a mechanism to limit the number of calls of another function in a specific interval, any additional calls within the specified time interval will be ignored.
 
@@ -116,7 +116,7 @@ function throttle(fn, delay) {
 
 The throttle function accepts two arguments: fn, which is a function to throttle, and delay in ms of the throttling interval and returns a throttled function.
 
-# Implement throttle function into our example
+#### Implement throttle function into our example
 
 ```js
 const handleMouseMove = (e) => {
@@ -129,11 +129,11 @@ window.addEventListener("mousemove", throttle(handleMouseMove, 1000));
 //1000ms => 1 second
 ```
 
-## Result
+#### Result
 
 ![Maple](/images/posts/r-d-t/3.gif)
 
-# Conclusion
+### Conclusion
 
 Debouncing and Throttling are two amazing techniques, they can increase the performance of your web application to another level.
 Choosing one of them depends on the case.

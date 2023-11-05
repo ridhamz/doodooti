@@ -9,7 +9,8 @@
       "@config/*": ["config/*"],
       "@json/*": ["json/*"],
       "@hooks/*": ["hooks/*"],
-      "@lib/*": ["lib/*"]
+      "@lib/*": ["lib/*"],
+      "contentlayer/generated": ["./.contentlayer/generated"]
     }
   }
 }

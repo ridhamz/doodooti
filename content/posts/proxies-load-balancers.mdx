@@ -1,0 +1,188 @@
+---
+title: "Proxies & Load balancers"
+date: 2023-11-02T01:00:00Z
+image: "/images/posts/prox-balncers/cover.png"
+categories: ["System design"]
+featured: false
+draft: false
+---
+
+### Introduction
+
+**Proxies** and **Load Balancers** are two essential technologies for businesses,
+whether large-scale enterprises or small startups, seeking to optimize their network
+infrastructure and enhance security. <br />
+
+### Proxies
+
+A proxy server, often simply referred to as a proxy, acts as an intermediary between a client device and a target server and there are two main types of proxies ** Forward Proxy ** and ** Reverse Proxy **.
+
+#### Forward Proxy
+
+A forward proxy is used as an intermediary between the client and a web server, it evaluates the request, takes any needed actions, and routes the request to the destination.
+![Maple](/images/posts/prox-balncers/fp1.png)
+
+The main reason of using a forward proxy is **the Anonymity and Privacy** because it allows users to browse the internet with a degree of anonymity. By routing their traffic through a proxy server, their IP address is hidden, which can be beneficial for those seeking to protect their online identity and privacy. However there are some other reasons why forward proxy is used :
+
+##### Security
+
+Forward proxy can inspect incoming and outgoing traffic for malicious content, which enhances security. It can scan for malware, viruses, and other threats in real-time. Additionally, forward proxy can enforce security policies, such as blocking access to known malicious websites.
+
+##### Caching
+
+Forward proxy can cache frequently requested web content. This caching capability accelerates access to frequently accessed resources and reduces the load on the target servers, which can lead to faster loading times for websites and reduced bandwidth consumption.
+
+##### Bandwidth Optimization
+
+Forward proxy can compress content before delivering it to clients, reducing bandwidth usage and improving load times. This is particularly useful in environments where bandwidth is limited or expensive.
+
+#### Reverse Proxy
+
+A **Reverse Proxy** is a server or gateway that sits between client devices (such as web browsers, mobile apps, or other user agents) and backend servers. It acts as an intermediary, receiving incoming client requests and forwarding them to the appropriate backend servers. Unlike a **Forward Proxy**, which is used to retrieve resources on behalf of clients, a reverse proxy is primarily used to serve as a gateway for incoming client requests to one or more backend servers.
+
+![Maple](/images/posts/prox-balncers/rv1.png)
+
+Here are key functions and use cases of a reverse proxy:
+
+##### Load Balancing
+
+One of the primary roles of a reverse proxy is load balancing. It can distribute incoming client requests across multiple backend servers, ensuring that the load is evenly distributed and no single server becomes overwhelmed. This enhances performance, scalability, and fault tolerance.
+
+##### Security and SSL/TLS Termination
+
+![Maple](/images/posts/prox-balncers/sec.gif)
+
+Reverse proxies can enhance security by acting as a barrier between the internet and internal network resources. They can hide the internal structure of a network, protect sensitive information, and mitigate certain types of attacks. In some cases, reverse proxies are used to implement web application firewalls (WAFs) to protect against common security threats. Also it can handle SSL/TLS encryption and decryption on behalf of backend servers. This offloads the resource-intensive encryption and decryption tasks from the backend servers, improving performance.
+
+##### Caching
+
+Reverse proxies can cache content to reduce the load on backend servers and accelerate content delivery. Cached content can be served quickly to clients without the need to request the same data from the backend servers repeatedly.
+
+##### URL Routing
+
+Reverse proxies can perform URL routing, directing incoming requests to different backend servers based on specific URL patterns or rules. This is useful for scenarios where different services or applications are hosted on different backend servers.
+
+##### Logging and Monitoring
+
+Reverse proxies often provide detailed logs and statistics about incoming and outgoing traffic, which can be invaluable for monitoring and troubleshooting network activity.
+
+#### Load Balancer
+
+A **Load Balancer** is a special type of a Reverse Proxy that distributes incoming network traffic across multiple servers, ensuring that no single server is overwhelmed with too much demand. The primary purpose of a load balancer is to improve the availability, scalability, and performance of applications and services.
+
+![Maple](/images/posts/prox-balncers/b1.jpg)
+
+However there are two types of **Load Balancer:** Layer 4 Load Balancer and Layer 7 Load Balancer they operate at different levels of the OSI model, each with its own set of features and use cases.
+
+##### Layer 4 Load Balancer (L4)
+
+###### Layer of Operation
+
+L4 load balancers operate at the transport layer (Layer 4) of the OSI model. They make routing decisions based on network-level information, such as IP addresses and port numbers.
+
+###### Load Balancing Method
+
+L4 load balancers primarily use IP and port information to distribute traffic. They do not inspect the content of the application data (e.g., HTTP headers or URL paths).
+
+###### Performance
+
+L4 load balancers are typically faster and have lower overhead compared to L7 load balancers because they do not need to inspect application data.
+
+###### Limited Content Awareness
+
+L4 load balancers lack visibility into the application data, making them less suitable for application-specific routing or optimizations.
+
+###### Use Cases
+
+- L4 load balancers are well-suited for TCP and UDP load balancing.
+- They are commonly used for simple traffic distribution, such as distributing network traffic across multiple web servers.
+- L4 load balancers are often used for non-HTTP applications, such as database connections or custom protocols.
+
+##### Layer 7 Load Balancer (L7)
+
+###### Layer of Operation
+
+L7 load balancers operate at the application layer (Layer 7) of the OSI model. They have a deeper understanding of application protocols and can make routing decisions based on application-specific data.
+
+###### Load Balancing Method
+
+L7 load balancers can perform content-based routing, making decisions based on HTTP headers, URL paths, cookies, and other application-specific data. They are highly application-aware.
+
+###### Content Optimization
+
+L7 load balancers can optimize content delivery by compressing data, caching, and serving as SSL termination points.
+
+###### Security
+
+L7 load balancers can inspect and filter application-specific data for security purposes, such as mitigating attacks and protecting against vulnerabilities.
+
+###### Application Awareness
+
+L7 load balancers can provide granular control over traffic routing based on the content of the application data. This allows for features like path-based routing and URL rewriting.
+
+###### Use Cases
+
+- L7 load balancers are ideal for web traffic distribution, as they can perform advanced content-based routing, SSL termination, and content optimization.
+- They are commonly used for web applications, services, and APIs.
+
+In summary, the main difference between Layer 4 and Layer 7 load balancers is the level of data they operate on and the depth of application awareness.
+
+##### Implement a basic Load Balancer using Nginx
+
+Nginx is a powerful and flexible web server that can be configured to act as a reverse proxy and load balancer. Here's a simple Nginx configuration to set up a load balancer for distributing traffic to multiple backend servers.
+
+- 1: Open or create an Nginx configuration file.
+
+  - 2: In the configuration file, create an upstream block that defines your backend servers. You can specify the servers' IP addresses or hostnames along with port numbers. For example:
+
+```bash
+upstream backend_servers {
+    server 192.168.1.101:80;
+    server 192.168.1.102:80;
+    server 192.168.1.103:80;
+}
+```
+
+In this example, we've defined three backend servers with their IP addresses and port numbers.
+
+Now let's create a server block to configure the load balancing behavior. Inside the server block, define the location and proxy_pass directives.
+
+```bash
+server {
+    listen 80;
+    server_name doodooti.com;
+
+    location / {
+        proxy_pass http://backend_servers;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+```
+
+Explain the config :
+
+- 1: **listen 80;** specifies that Nginx should listen on port 80.
+- 2: **server_name doodooti.com;** specifies the domain or hostname that Nginx should
+  handle.
+- 3: **location /** defines the location where the load balancing should occur.
+- 4: **proxy_pass http://backend_servers;** instructs Nginx to proxy incoming requests
+  to the upstream backend_servers defined earlier.
+
+- 5: **The proxy_set_header** directives pass along some headers, such as the original
+  host, client IP, and forwarded-for IP, for better logging and debugging.
+
+The final step is to save the config and reload the Nginx server:
+
+```bash
+sudo nginx -t
+
+sudo service nginx reload
+```
+
+With this configuration, Nginx will distribute incoming requests across the backend servers using a **round-robin** load balancing algorthim that **Nginx** uses by default.
+
+#### Summary
+
+In this blog, we delve into the world of Proxies and Load Balancers, exploring their key concepts and how they work, complete with practical examples. I hope you enjoy the journey of discovery.

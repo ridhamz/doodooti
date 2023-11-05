@@ -24,7 +24,7 @@ const Pagination = ({ section, currentPage, totalPages }) => {
             <Link
               href={
                 indexPageLink
-                  ? `${section ? "/" + section : "/"}`
+                  ? `${section ? "/" + section : ""}/posts`
                   : `${section ? "/" + section : ""}/page/${currentPage - 1}`
               }
               className="flex items-center rounded-full px-2 py-1 text-3xl font-bold leading-none text-dark dark:text-darkmode-light"
@@ -57,7 +57,7 @@ const Pagination = ({ section, currentPage, totalPages }) => {
                 <Link
                   href={
                     i === 0
-                      ? `${section ? "/" + section : "/"}`
+                      ? `${section ? "/" + section : ""}/posts`
                       : `${section ? "/" + section : ""}/page/${pagination}`
                   }
                   passHref

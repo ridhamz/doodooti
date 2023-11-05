@@ -7,19 +7,19 @@ featured: true
 draft: false
 ---
 
-# Introduction
+### Introduction
 
 Hello community 🙌🏻,
 
 As a JavaScript developer, knowing how to deal with asynchronous operations is an essential skill.
 
-# 1. What are Promises 🤔 ?
+### 1. What are Promises 🤔 ?
 
 Promises are a new feature introduced by ECMAScript 2015 (ES6) that is used to get the result of an asynchronous JavaScript operation like callbacks but in a fancy way.
 
 Technically, a JavaScript promise is an object that returns a value that you hope to receive in the future.
 
-# 2. Promise declaration syntax 🦄
+### 2. Promise declaration syntax 🦄
 
 ![Maple](/images/posts/async-js/0.png)
 
@@ -31,7 +31,7 @@ resolve: get executed when the operation is done with success.
 
 reject: get executed when the operation failed.
 
-# 3. Simulation of real call API using Promises ⏳
+### 3. Simulation of real call API using Promises ⏳
 
 ![Maple](/images/posts/js-part2/1.png)
 
@@ -43,7 +43,7 @@ getUserById is a function that takes id as an argument and returns the user if e
 
 Depending on the result of the getUserById function, if the user exists, we execute the resolve function and pass the user data as an argument or execute the reject function and pass an error message as an argument.
 
-# 4. Promise object status 📉
+### 4. Promise object status 📉
 
 The promise object has 3 different status depending on the asynchronous operation.
 
@@ -53,7 +53,7 @@ resolved if the asynchronous operation was done successfully.
 
 rejected if the asynchronous operation failed.
 
-# 5. Getting the Promise result ✅
+### 5. Getting the Promise result ✅
 
 Getting the result of a Promise using .then .catch syntax.
 
@@ -69,7 +69,7 @@ Besides that, the Promise class provides a third method called finally that allo
 
 <center>Finally example</center>
 
-# 6. Promise Chaining ⛓️
+### 6. Promise Chaining ⛓️
 
 As we know that every promise object has 3 methods (then, catch, finally) the thing is that every method returns a new promise.
 
@@ -85,7 +85,7 @@ In the example above :
 
 Promise Changing is a powerful and clean approach used to manipulate the result of a promise on multiple levels. (it is the same for catch and finally)
 
-# 7. Promise.all() and Promise.race() ⚙️
+### 7. Promise.all() and Promise.race() ⚙️
 
 - Promise.all() : static method takes an array of Promises as an argument and returns a new Promise that resolves the resolved values from all Promises that exists in the array, but if one of these promises is rejected, then the Promise returned is also rejected with an error from the first rejected promise.
 
@@ -105,7 +105,7 @@ Promise Changing is a powerful and clean approach used to manipulate the result 
 
 <center>Promise.race() example</center>
 
-# 8. async-await 💎
+### 8. async-await 💎
 
 async-await is a JavaScript feature introduced by ECMAScript 2016 (ES7) in the order to give us more options to deal with asynchronous operations.
 
@@ -151,7 +151,7 @@ we used getResult function cause in JavaScript await is allowed to use only in a
 
 <center>Using handleAsync in an IIFE function</center>
 
-# 9. Asynchronous operations inside loops 💪🏻
+### 9. Asynchronous operations inside loops 💪🏻
 
 By default, JavaScript loops don’t support asynchronous operations but there is a way to do asynchronous operation inside a loop.
 

@@ -7,7 +7,7 @@ featured: true
 draft: false
 ---
 
-# Introduction
+### Introduction
 
 Hello, community 🙌🏻,
 
@@ -15,7 +15,7 @@ Right now javascript is one of the most popular programming languages in the wor
 
 In this blog, I will share the most important concepts about javascript that you have to know as a web developer.
 
-# 1. Thread of execution and Global execution context 💡
+### 1. Thread of execution and Global execution context 💡
 
 As we know javascript is a single thread language this is mean that every javascript code executes line by line using Thread of execution, and this process happens inside a container called the global execution context.
 
@@ -25,7 +25,7 @@ But this global execution context can contain lines of code and also functions, 
 
 The answer is that every function in javascript has its own execution context, when a function gets invoked javascript will create a brain new execution context then the thread of execution will switch from the global execution context to the brain new execution context and starts running function’s code line by line, Javascript manages all the execution contexts with something called Call Stack.
 
-# 2. Call Stack (Last In First Out) 🧮
+### 2. Call Stack (Last In First Out) 🧮
 
 By default, the call stack contains the global execution context, when a function gets invoked javascript push it inside the call stack so the thread of execution switch from global to this new execution context, and when the function has done javascript will remove it from the call stack then the thread of execution go back to the global.
 ![Maple](/images/posts/js-part1/2.png)
@@ -34,7 +34,7 @@ In this example when the thread of execution comes to line 7 javascript will fig
 
 ![Maple](/images/posts/js-part1/3.png)
 
-# 3. CallBacks, CallBack Queue and Event Loop ➿
+### 3. CallBacks, CallBack Queue and Event Loop ➿
 
 Javascript is a single thread language it can’t handle many operations in the same time but what makes it very powerful is its asynchronous nature this is mean that javascript when executing an asynchronous operation didn’t wait for the result of this operation because waiting the result of an asynchronous code will make it a slow language (example get data from database). So the idea is to run any asynchronous code without waiting for the result and jump to the next line when the result is ready javascript gets it using callBack functions. To simplify, a callback function is a normal function gets executed when an asynchronous operation is done in order to get or manipulate the result.
 

@@ -7,7 +7,7 @@ featured: true
 draft: false
 ---
 
-# Introduction
+### Introduction
 
 Hello community 🙌🏻,
 
@@ -15,20 +15,20 @@ This is part 2 of“ How does javascript work in the background” blog series �
 
 Today we will talk about Global memory, Local memory, Scope & Variable Scope, Higher Order functions and one of the most important and powerful javascript concept it is closure.
 
-# 1. Global Memory 🌎
+### 1. Global Memory 🌎
 
 Global memory is where all global variables are stored, it is connected to the global execution context. Every variable or function declared in the global execution context will be stored in the global memory.
 ![Maple](/images/posts/js-part2/0.png)
 
 In the first reading, javascript will put all variables and functions declaration in the global memory as key-value pairs, the variable count will take the initial value 0 and the function will take the code definition as a value.
 
-# 2. Local Memory 🗺️
+### 2. Local Memory 🗺️
 
 Every javascript function has own local memory used to store local variables.
 
 When a function tries to get variable value it looks first in its local memory if the variable doesn’t exist then the function will be searching for it in the global memory.
 
-# 3. Scope & Variable Scope 🔭
+### 3. Scope & Variable Scope 🔭
 
 The scope is a mechanism used by the language in order to handle the visibility and the access of variables.
 
@@ -42,7 +42,7 @@ In the example above the function calculate can access to a and b but if we try 
 
 Another thing you need to know about javascript scope is that inside the same function if there is a variable declared with let or const keyword inside a block {} can’t be accessed outside this block it is called block scope however a variable declared with the keyword var can’t have the block scope.
 
-# 4. Higher-Order functions ⚡
+### 4. Higher-Order functions ⚡
 
 the basic definition is that any function takes another function as an argument or/and returns a function as result called ‘Higher Order function’.
 
@@ -54,7 +54,7 @@ the basic definition is that any function takes another function as an argument 
 
 <center>Higher Order Function Advanced Example</center>
 
-# 5. Closure 🏆
+### 5. Closure 🏆
 
 Closure is when a function remembers the variables around it, even when that function is executed in a different context.
 
