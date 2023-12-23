@@ -110,9 +110,10 @@ const Header = () => {
               ))}
             </ul>
             {/* header social */}
-            <Social source={socical} className="socials" />
           </div>
-          {/*  <ThemeSwitcher /> */}
+          <Social source={socical} className="socials" />
+          <ThemeSwitcher />
+
           {/* Header search */}
           <div
             className="search-icon"

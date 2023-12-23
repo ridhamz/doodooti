@@ -210,7 +210,7 @@ const PostSingle = ({
                   <InnerPagination posts={posts} date={date} />
                 )}
               </article>
-              <div className="mt-16">
+              {/* <div className="mt-16">
                 {disqus.enable && (
                   <DiscussionEmbed
                     key={theme}
@@ -218,9 +218,9 @@ const PostSingle = ({
                     config={disqusConfig}
                   />
                 )}
-              </div>
+              </div> */}
             </div>
-            {/*  <Sidebar
+            {/* <Sidebar
               posts={posts.filter((post) => post.slug !== slug)}
               categories={allCategories}
             /> */}
@@ -228,15 +228,15 @@ const PostSingle = ({
         </div>
 
         {/* Related posts */}
-        <div className="container mt-20">
-          {/* <h2 className="section-title">Related Posts</h2>
+        <div className="container mt-2">
+          <h2 className="section-title">Related Posts</h2>
           <div className="row mt-16">
             {relatedPosts.slice(0, 3).map((post, index) => (
               <div key={"post-" + index} className="mb-12 lg:col-4">
                 <Post post={post} />
               </div>
             ))}
-          </div> */}
+          </div>
         </div>
       </section>
     </Base>

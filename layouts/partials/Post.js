@@ -50,15 +50,6 @@ const Post = ({ post }) => {
         </Link>
       </h3>
       <ul className="flex items-center space-x-4">
-        <li>
-          <Link
-            className="inline-flex items-center font-secondary text-xs leading-3"
-            href="/about"
-          >
-            <FaUserAlt className="mr-1.5" />
-            {author}
-          </Link>
-        </li>
         <li className="inline-flex items-center font-secondary text-xs leading-3">
           <FaRegCalendar className="mr-1.5" />
           {dateFormat(post.frontmatter.date)}
@@ -66,7 +57,7 @@ const Post = ({ post }) => {
       </ul>
       {/* <p>{post.content.slice(0, Number(summary_length))}</p> */}
       <Link
-        className="btn btn-outline-primary mt-4 "
+        className="btn btn-outline-primary mt-4"
         href={`/${blog_folder}/${post.slug}`}
       >
         Read More

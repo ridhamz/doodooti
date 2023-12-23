@@ -11,7 +11,7 @@ import { slugify } from "@lib/utils/textConverter";
 const Categories = ({ categories }) => {
   return (
     <Base title={"categories"}>
-      <section className="section pt-0">
+      <section className="section mt-2 pt-6">
         {markdownify(
           "Categories",
           "h1",
@@ -47,7 +47,7 @@ export const getStaticProps = () => {
   const categories = getTaxonomy(`content/${blog_folder}`, "categories");
   const categoriesWithPostsCount = categories.map((category) => {
     const filteredPosts = posts.filter((post) =>
-      post.frontmatter.categories.map(e => slugify(e)).includes(category)
+      post.frontmatter.categories.map((e) => slugify(e)).includes(category)
     );
     return {
       name: category,

@@ -68,7 +68,7 @@ const Home = ({
             {banner.image_enable && (
               <div className="col-9 lg:col-6">
                 <ImageFallback
-                  className="mx-auto object-contain"
+                  className="mx-auto rounded object-contain"
                   src={banner.image}
                   width={548}
                   height={443}
@@ -109,7 +109,7 @@ const Home = ({
                 </div>
               )}
 
-              <Contact />
+              {/* <Contact /> */}
             </div>
             {/* sidebar 
             <Sidebar
