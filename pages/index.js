@@ -99,11 +99,16 @@ const Home = ({
                   )}
                   <div className="">
                     <div className="row">
-                      {sortPostByDate.slice(0, 3).map((post) => (
+                      {sortPostByDate.slice(0, showPosts).map((post) => (
                         <div className="mb-8 md:col-4" key={post.slug}>
                           <Post post={post} />
                         </div>
                       ))}
+
+                      <Pagination
+                        totalPages={Math.ceil(posts.length / showPosts)}
+                        currentPage={1}
+                      />
                     </div>
                   </div>
                 </div>
