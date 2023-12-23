@@ -1,6 +1,7 @@
 import config from "@config/config.json";
 import Base from "@layouts/Baseof";
 import Contact from "@layouts/Contact";
+import About from "@layouts/components/About";
 import ImageFallback from "@layouts/components/ImageFallback";
 import Pagination from "@layouts/components/Pagination";
 import Services from "@layouts/components/Services";
@@ -13,6 +14,7 @@ import dateFormat from "@lib/utils/dateFormat";
 import { sortByDate } from "@lib/utils/sortFunctions";
 import { markdownify } from "@lib/utils/textConverter";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import { FaRegCalendar } from "react-icons/fa";
 const { blog_folder, pagination } = config.settings;
 
@@ -44,7 +46,7 @@ const Home = ({
           priority
         />
 
-        <div className="container">
+        <div className="container mt-5">
           <div className="row flex-wrap-reverse items-center justify-center lg:flex-row">
             <div
               className={
@@ -54,20 +56,14 @@ const Home = ({
               }
             >
               <div className="banner-title">
-                {markdownify(banner.title, "h1")}
-                {markdownify(banner.title_small, "span")}
+                {markdownify(banner.title, "h2", "mt-0")}
+                {markdownify(banner.title_small, "h3")}
               </div>
-              {markdownify(banner.content, "p", "mt-4")}
-
-              {banner.button.enable && (
-                <Link
-                  className="btn btn-primary mt-6"
-                  href={banner.button.link}
-                  rel={banner.button.rel}
-                >
-                  {banner.button.label}
-                </Link>
-              )}
+              {/* {markdownify(banner.content, "p", "mt-1")} */}
+              <div className="mt-1">
+                Hi there! 🖖 My name is Ridha
+                <p>I’m a Senior Software Engineer and AWS Specialist</p>
+              </div>
             </div>
             {banner.image_enable && (
               <div className="col-9 lg:col-6">
@@ -90,7 +86,8 @@ const Home = ({
         <div className="container">
           <div className="row items-start">
             <div className="mb-12 lg:col-12 lg:mb-0">
-              <Services />
+              {/* <About />
+              <Services /> */}
               {/* <Teams /> */}
               {/* Recent Posts */}
               {recent_posts.enable && (
