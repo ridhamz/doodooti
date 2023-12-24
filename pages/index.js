@@ -56,7 +56,7 @@ const Home = ({
               }
             >
               <div className="banner-title">
-                {markdownify(banner.title, "h2", "mt-0")}
+                {/* {markdownify(banner.title, "h2", "mt-0")} */}
                 {markdownify(banner.title_small, "h3")}
               </div>
               {/* {markdownify(banner.content, "p", "mt-1")} */}
@@ -71,7 +71,7 @@ const Home = ({
                   className="mx-auto rounded object-contain"
                   src={banner.image}
                   width={548}
-                  height={443}
+                  height={400}
                   priority={true}
                   alt="Banner Image"
                 />
