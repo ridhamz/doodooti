@@ -15,6 +15,7 @@ import { sortByDate } from "@lib/utils/sortFunctions";
 import { markdownify } from "@lib/utils/textConverter";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { BsArrowLeftShort, BsArrowRightShort } from "react-icons/bs";
 import { FaRegCalendar } from "react-icons/fa";
 const { blog_folder, pagination } = config.settings;
 
@@ -99,16 +100,23 @@ const Home = ({
                   )}
                   <div className="">
                     <div className="row">
-                      {sortPostByDate.slice(0, showPosts).map((post) => (
+                      {sortPostByDate.slice(0, 6).map((post) => (
                         <div className="mb-8 md:col-4" key={post.slug}>
                           <Post post={post} />
                         </div>
                       ))}
 
-                      <Pagination
-                        totalPages={Math.ceil(posts.length / showPosts)}
-                        currentPage={1}
-                      />
+                      <div className="grid place-items-center  ">
+                        <Link
+                          href={`/posts`}
+                          className="dark:primary ml-4 flex items-center rounded-full px-2 py-1 text-3xl font-bold leading-none text-primary"
+                        >
+                          <>
+                            <span className="mr-3 text-lg">View all posts</span>
+                            <BsArrowRightShort />
+                          </>
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>
