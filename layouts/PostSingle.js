@@ -31,6 +31,9 @@ import { useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import DocumentDuplicateIcon from "@heroicons/react/24/outline/DocumentDuplicateIcon";
 
+import MDX from "@mdx-js/runtime";
+import CodeBlock from "./CodeBlock";
+
 SyntaxHighlighter.registerLanguage("tsx", tsx);
 SyntaxHighlighter.registerLanguage("typescript", typescript);
 SyntaxHighlighter.registerLanguage("scss", scss);
@@ -38,6 +41,28 @@ SyntaxHighlighter.registerLanguage("bash", bash);
 SyntaxHighlighter.registerLanguage("markdown", markdown);
 SyntaxHighlighter.registerLanguage("json", json);
 SyntaxHighlighter.registerLanguage("lua", lua);
+
+const components = {
+  Box: (props) => <div {...props} />,
+  pre: (props) => <div {...props} />,
+  code: ({ inline, className, ...props }) => {
+    const hasLang = /language-(\w+)/.exec(className || "");
+    return !inline && hasLang ? (
+      <SyntaxHighlighter
+        style={oneDark}
+        language={hasLang[1]}
+        PreTag="div"
+        className="mockup-code scrollbar-track-base-content/5 scrollbar-thumb-base-content/40 scrollbar-track-rounded-md scrollbar-thumb-rounded scrollbar-thin"
+        showLineNumbers={true}
+        useInlineStyles={true}
+      >
+        {String(props.children).replace(/\n$/, "")}
+      </SyntaxHighlighter>
+    ) : (
+      <code className={className} {...props} />
+    );
+  },
+};
 
 function code({ className, ...props }) {
   return <SyntaxHighlighter PreTag="div" {...props} />;
@@ -122,7 +147,7 @@ const PostSingle = ({
                   </li>
                 </ul>
                 <div className="contentd">
-                  <ReactMarkdown
+                  {/*  <ReactMarkdown
                     components={{
                       code({ inline, className, ...props }) {
                         const hasLang = /language-(\w+)/.exec(className || "");
@@ -195,7 +220,8 @@ const PostSingle = ({
                     }}
                   >
                     {post.content}
-                  </ReactMarkdown>
+                  </ReactMarkdown>*/}
+                  <MDX components={components}>{post.content}</MDX>
                 </div>
                 {config.settings.InnerPaginationOptions.enableBottom && (
                   <InnerPagination posts={posts} date={date} />

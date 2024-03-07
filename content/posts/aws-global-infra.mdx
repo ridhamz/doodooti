@@ -1,0 +1,211 @@
+---
+title: AWS global infrastructure
+date: 2024-01-12T01:00:00Z
+image: /images/posts/aws-global/1.png
+categories: ["AWS"]
+featured: true
+draft: false
+---
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Introduction</h3>
+  <div style={{ padding: "5px" }}>
+    AWS is a global cloud platform powered by a global infrastructure that
+    consists of a network of data centers and facilities around the world.
+    <p>
+      AWS provides cloud computing services to millions of customers, and its
+      global infrastructure is designed to ensure high availability,
+      reliability, and low-latency access to its services.
+    </p>
+  </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Components</h3>
+  <div style={{ padding: "5px" }}>
+    There are four key components that form the backbone of the AWS global
+    infrastructure:
+    <ul>
+      <li>
+        <strong>Regions</strong>
+      </li>
+      <li>
+        <strong>Availability Zones</strong>
+      </li>
+      <li>
+        <strong>Edge Locations</strong>
+      </li>
+      <li>
+        <strong>Local Zones</strong>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Regions</h3>
+  <div style={{ padding: "5px" }}>
+    A region is a geographical area where AWS has established a presence to host its cloud computing services. Each AWS region is essentially a separate and independent data center infrastructure, strategically located around the world.
+  </div>
+
+<div style={{ padding: "5px" }}>
+  With this separation, cloud architects have the ability to design highly
+  available applications that operate across multiple regions. In the event of a
+  specific region experiencing downtime, the applications remain functional
+  because the operations in the unaffected region are not impacted by the issues
+  in the downed region. This approach enhances resilience and ensures continuous
+  service availability, reinforcing the robustness of the overall architecture.
+</div>
+
+![Maple](/images/posts/aws-global/2.png)
+
+<div style={{ padding: "5px" }}>
+  Regions exist around the world, providing businesses with the opportunity to
+  deploy their applications and solutions in the closest geographical proximity
+  to their customers. This strategic placement facilitates low-latency access,
+  contributing to improved application performance and a more responsive user
+  experience. By leveraging AWS regions, businesses can optimize the
+  geographical distribution of their resources, ensuring efficient delivery of
+  services and minimizing the time it takes for data to travel between end-users
+  and the deployed infrastructure.
+</div>
+
+  <div style={{ padding: "5px" }}>
+    AWS presently operates 33 regions globally, each distinguished by a unique name and code. 
+    Additionally, they have plans to launch an additional 6 regions in the near future.
+
+  </div>
+
+  <div style={{ padding: "5px" }}>
+    When interacting with an AWS service, your actions are confined to a designated region.
+     For example, if you wish to provision an EC2 instance (a virtual machine), 
+     you must select a specific region, as an EC2 instance in the us-east-1 (N. Virginia) 
+     region is distinct from an EC2 instance in the eu-central-1 (Frankfurt) region.
+    Some services do not necessitate the selection of a specific region
+     these are referred to as global services.
+  </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Avalabilty Zone</h3>
+  <div style={{ padding: "5px" }}>
+    <p>
+      Each AWS region comprises a minimum of three Availability Zones (AZs) and
+      may extend to include four, five, or six AZs. These Availability Zones are
+      meticulously separated, ensuring that the failure of a specific AZ does
+      not impact the functionality of the others. They are interconnected
+      through high-bandwidth, low-latency networking, further enhancing the
+      overall reliability and resilience of the infrastructure.
+    </p>
+    <p
+      style={{
+        marginTop: "5px",
+        border: "1px solid #eee",
+        borderRadius: "10px",
+        padding: "2px",
+      }}
+    >
+      AWS does not explicitly disclose the composition of an Availability Zone
+      (AZ), but it can be either a single data center or multiple data centers.
+    </p>
+    <p style={{ marginTop: "5px" }}>
+      In the context of the earlier example, when provisioning an EC2 instance,
+      we must also select a specific Availability Zone (AZ) inside the region
+      since an EC2 instance operates exclusively within a single AZ.
+    </p>
+    <p style={{ marginTop: "5px" }}>
+      Additionally, since EC2 is a private service, it operates only from a
+      Virtual Private Cloud (VPC). A VPC represents a secluded cloud network
+      segmented into subnets, which can be classified as either private or
+      public. Explicit configuration is essential to facilitate communication
+      between the internet and any resource provisioned within the VPC.
+    </p>
+    <div style={{ marginTop: "5px" }}>
+      <h5>This is will be the final architecture:</h5>
+      <img src="/images/posts/aws-global/3.png" />
+    </div>
+  </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Edge locations</h3>
+  <div style={{ padding: "5px" }}>
+    <p>
+      Edge locations are AWS data centers designed to deliver services with the
+      lowest latency possible. Amazon has dozens of these data centers spread
+      across the world. They’re closer to users than Regions or Availability
+      Zones, often in major cities, so responses can be fast and snappy.
+    </p>
+    <div style={{ marginTop: "5px" }}>
+      <h5>Edge locations are used for a number of AWS features:</h5>
+      <p style={{ marginTop: "5px" }}>
+        CloudFront is the most commonly discussed use of edge locations. It’s a
+        content delivery network that caches content in edge locations. Content
+        can be served directly from the cache, so it gets to users faster.
+        CloudFront is often used to serve static assets, speed up websites, and
+        stream video.
+      </p>
+      <p style={{ marginTop: "5px" }}>
+        AWS Global Accelerator allows you to route requests for key resources
+        through Amazon’s global network—even if the request is going halfway
+        round the world. The request is initially routed to the closest edge
+        location and then travels through Amazon’s network—often with lower
+        latency and higher throughput than the public internet.{" "}
+      </p>
+      <img src="/images/posts/aws-global/4.png" />
+      <p style={{ marginTop: "5px" }}>
+        Note: you can’t run your workloads directly in edge locations, they’re
+        only used by Amazon’s managed services.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Local zones</h3>
+  <div style={{ padding: "5px" }}>
+    <p style={{ padding: "5px" }}>
+      Local Zones are an infrastructure deployment concept from Amazon Web
+      Services (AWS) designed to bring AWS services closer to a specific
+      geographic area, providing users with low-latency access to resources and
+      applications.
+    </p>
+    <p style={{ padding: "5px" }}>
+      Local Zones are an extension of the main AWS Regions and are ideal for
+      latency-sensitive workloads or applications that require real-time
+      processing.
+    </p>
+    <p style={{ padding: "5px" }}>
+      These zones are often situated in large metropolitan areas and provide a
+      selection of AWS services, including Elastic Compute Cloud (EC2),
+      Relational Database Service (RDS), and Amazon Elastic Kubernetes Service
+      (EKS), among others. By deploying resources in a Local Zone, customers can
+      reduce latency for end-users in that particular location, improving
+      application performance and responsiveness.
+    </p>
+    <img src="/images/posts/aws-global/5.png" />
+    In the example above, we observe the provisioning of an EC2 instance within
+    a local zone. Notably, the VPC demonstrates the capability to extend
+    seamlessly from the Availability Zone (AZ) into the local zone. This
+    integration showcases the flexibility and continuity of the Virtual Private
+    Cloud (VPC) architecture, allowing resources to span across both the AZ and
+    its associated local zone
+  </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Conclusion</h3>
+  <div style={{ padding: "5px" }}>
+    <p>
+      AWS Global Infrastructure is a robust cloud platform with key
+      components—Regions, Availability Zones, Edge Locations, and Local Zones.
+      These components ensure high availability, resilience, and low-latency
+      access to cloud services worldwide.
+    </p>
+    <p style={{ marginTop: "5px" }}>
+      In conclusion, AWS's infrastructure provides a flexible and responsive
+      foundation, empowering businesses with efficient and reliable cloud
+      solutions globally.
+    </p>
+  </div>
+</div>
