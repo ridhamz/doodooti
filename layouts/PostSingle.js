@@ -222,9 +222,9 @@ const PostSingle = ({
                   </ReactMarkdown>*/}
                   <MDX components={components}>{post.content}</MDX>
                 </div>
-                {config.settings.InnerPaginationOptions.enableBottom && (
+                {/* {config.settings.InnerPaginationOptions.enableBottom && (
                   <InnerPagination posts={posts} date={date} />
-                )}
+                )} */}
               </article>
               {/* <div className="mt-16">
                 {disqus.enable && (
@@ -244,7 +244,7 @@ const PostSingle = ({
         </div>
 
         {/* Related posts */}
-        <div className="container mt-2">
+        {/* <div className="container mt-2">
           <h2 className="section-title">Related Posts</h2>
           <div className="row mt-16">
             {relatedPosts.slice(0, 3).map((post, index) => (
@@ -253,7 +253,7 @@ const PostSingle = ({
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </section>
     </Base>
   );

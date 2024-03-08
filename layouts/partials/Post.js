@@ -2,6 +2,7 @@ import config from "@config/config.json";
 import ImageFallback from "@layouts/components/ImageFallback";
 import dateFormat from "@lib/utils/dateFormat";
 import Link from "next/link";
+import { BsArrowRightShort } from "react-icons/bs";
 import { FaRegCalendar, FaUserAlt } from "react-icons/fa";
 
 const Post = ({ post }) => {
@@ -41,7 +42,17 @@ const Post = ({ post }) => {
           ))}
         </ul>
       </div>
-      <h3 className="h6 mb-2 mt-4">
+      {/* <div className="">
+        <Link
+          className="dark:primary flex justify-end rounded-full px-2 py-1 text-3xl font-bold leading-none text-primary"
+          href={`/${blog_folder}/${post.slug}`}
+        >
+          <>
+            <span className="mr-3 text-lg">Read Post</span>
+          </>
+        </Link>
+      </div> */}
+      <h3 className="h6 -0 mb-2 mt-4">
         <Link
           href={`/${blog_folder}/${post.slug}`}
           className="block hover:text-primary"
@@ -55,13 +66,6 @@ const Post = ({ post }) => {
           {dateFormat(post.frontmatter.date)}
         </li>
       </ul>
-      {/* <p>{post.content.slice(0, Number(summary_length))}</p> */}
-      <Link
-        className="btn btn-outline-primary mt-4"
-        href={`/${blog_folder}/${post.slug}`}
-      >
-        Read More
-      </Link>
     </div>
   );
 };
