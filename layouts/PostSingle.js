@@ -32,7 +32,6 @@ import CopyToClipboard from "react-copy-to-clipboard";
 import DocumentDuplicateIcon from "@heroicons/react/24/outline/DocumentDuplicateIcon";
 
 import MDX from "@mdx-js/runtime";
-import CodeBlock from "./CodeBlock";
 
 SyntaxHighlighter.registerLanguage("tsx", tsx);
 SyntaxHighlighter.registerLanguage("typescript", typescript);
