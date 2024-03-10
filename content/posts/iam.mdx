@@ -1,0 +1,286 @@
+---
+title: Identity and Access Management (IAM)
+date: 2024-02-03T01:00:00Z
+image: /images/posts/iam/0.png
+categories: ["AWS", "IAM"]
+featured: true
+draft: false
+---
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Introduction</h3>
+  <div style={{ padding: "5px" }}>
+    IAM (Identity and Access Management) stands out as a global AWS service,
+    distributed across all regions, serving as the foundational service for
+    managing access to resources within your AWS account.
+    <p>
+      When users seek to perform actions on resources, such as creating an EC2
+      instance, specific permissions are required. IAM empowers the creation of
+      users and enables precise control over permissions and authorizations
+      through IAM policies.
+    </p>
+    <p>
+      An IAM user is designated as an identity, and the system introduces two
+      additional identity types: roles and groups. These identities provide
+      enhanced flexibility in access management, offering a comprehensive
+      approach to permissions and organizational control.
+    </p>
+    <img src="/images/posts/iam/3.jpg" alt="IAM Image" />
+  </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>IAM Policies</h3>
+  <div style={{ padding: "5px" }}>
+    <p>
+      An IAM Policy serves as a mechanism to either grant or deny permissions to
+      identities within the AWS environment. These policies, presented in JSON
+      or YAML format, are linked to specific identities.
+    </p>
+    <p>
+      Once a policy is attached, the associated identity operates strictly
+      within the boundaries defined by the policy. Here's a simple example of an
+      IAM Policy:
+    </p>
+      <img src="/images/posts/iam/7.png" alt="IAM Image" />
+   <p>
+      In this example, we create an IAM Policy that grants create, stop, and
+      terminate EC2 instances:
+    </p>
+    <ul>
+      <li>
+        <b>Version</b>: This specifies the version of the IAM policy language.
+        In this case, it's set to "2012-10-17," which is a standard version.
+      </li>
+      <li>
+        <b>Statement</b>: This is an array of policy statements. Each statement
+        in the array represents a set of permissions.
+      </li>
+      <li>
+        <b>Effect</b>: This indicates that the specified actions are allowed.
+        You could also use "Effect": "Deny" to explicitly deny the actions.
+      </li>
+      <li>
+        <b>Action</b>: This lists the AWS actions that are allowed. In this
+        case, the policy allows the actions of running, stopping, and
+        terminating EC2 instances.
+      </li>
+      <li>
+        <b>Resource</b>: This specifies the resource to which the actions apply.
+        Replace your-region with the AWS region code where your instances
+        reside, and replace your-account-id with your AWS account ID. The
+        instance/* at the end indicates that these permissions apply to all EC2
+        instances (* is a wildcard for any instance ID).
+      </li>
+    </ul>
+    <p style={{ marginTop: "10px" }}>
+      In this example, we are granting permissions specifically for handling EC2
+      instances. It's important to note that, in IAM, the order of evaluation
+      follows a specific sequence: Explicit Deny, Explicit Allow, and finally,
+      Implicit Deny. This means that if an action is not explicitly allowed for
+      EC2 instances, it will implicitly be denied. Careful attention to this
+      order is crucial for crafting policies to ensure that only intended
+      actions are permitted, and that security measures are in place.
+    </p>
+  </div>
+  <h5>Evaluate multiple policies</h5>
+  <div style={{ padding: "5px" }}>
+    when multiple policies are attached to an identity (user, group, or role),
+    the policies are evaluated based on a specific order of precedence. The
+    priority follows these rules:
+    <p>
+      <b>Explicit Deny Overrides Explicit Allow:</b>
+      <div>
+        If there is an explicit Deny statement in any of the attached policies,
+        it takes precedence over any Allow statements. This means that if any
+        policy explicitly denies an action, it will override an explicit allow
+        from another policy.
+      </div>
+    </p>
+    <p>
+      <b>Policy Evaluation Order:</b>
+      <div>
+        Policies are evaluated based on the order in which they are attached to
+        the identity. Policies attached later in the list take precedence over
+        policies attached earlier.
+      </div>
+    </p>
+    <p>
+      <b>User Policy vs. Group Policy:</b>
+      <div>
+        If a user is a member of multiple groups and both the user's policy and
+        group policies grant permissions for the same action, the user's policy
+        takes precedence.
+      </div>
+    </p>
+    <p>
+      <b>Explicit Allow in a Policy:</b>
+      <div>
+        If a policy explicitly allows an action, and no other policy explicitly
+        denies the same action, the action is allowed.
+      </div>
+    </p>
+    <p>
+      <b>Implicit Deny:</b>
+      <div>
+        If there are no policies attached that explicitly allow an action, and
+        there is no explicit allow at the identity level (e.g., on the user or
+        group), then the action is implicitly denied. It's crucial to design
+        policies carefully to avoid unintended consequences. Explicitly denying
+        specific actions can be a useful security practice, but it requires
+        careful consideration to prevent accidental denial of necessary
+        permissions. Additionally, understanding the order of evaluation helps
+        in crafting policies that align with the desired access control model.
+      </div>
+    </p>
+  </div>
+  <h5>Types of policies</h5>
+  <div style={{ padding: "5px" }}>
+    In AWS Identity and Access Management (IAM), there are mainly two types of
+    policies:
+    <div>
+      <h6>Managed Policies</h6>
+      <p>
+        <b>AWS Managed Policies:</b> These are policies created and managed by
+        AWS. You can attach these policies to multiple users, groups, or roles
+        in your AWS account.
+      </p>
+      <img src="/images/posts/iam/1.png" alt="IAM Image" />
+      <p>
+        <b>Customer Managed Policies:</b> These are policies that you create and
+        manage. You can attach them to multiple users, groups, or roles in your
+        AWS account.
+      </p>
+      <img src="/images/posts/iam/2.png" alt="IAM Image" />
+       <h6 style={{marginTop : "5px"}}>Inline Policies</h6>
+       <p>
+         These are policies that you create and manage directly within a user, group, or role. Unlike managed policies, inline policies are embedded directly into the resource's definition and are deleted when the resource is deleted.
+Policies, whether managed or inline, define the permissions for identities (users, groups, or roles) in AWS, specifying what actions are allowed or denied on what resources.
+       </p>
+    </div>
+
+  </div>
+</div>
+<div style={{ marginTop: "20px" }}>
+  <h3>IAM Users</h3>
+  <div style={{ padding: "5px" }}>
+  <p>
+   An IAM user is the principal identity in IAM. Each user possesses their own set of credentials, including access keys. Users serve as a means of long-term access to AWS resources, enabling human access to the AWS Cloud through the console.
+   Additionally, they can be utilized by applications to access resources via the access that you can create after the user creation process.
+   </p>
+   <div>
+   <h5>Example of creating a user to access AWS S3 via the CLI:</h5>
+   <h6 style={{marginTop : "5px"}}>1: Create a user through the AWS console</h6>
+    <img src="/images/posts/iam/4.png" alt="IAM Image" />
+    <h6 style={{marginTop : "5px"}}>2: Create Access Keys for the user</h6>
+    <img src="/images/posts/iam/5.png" alt="IAM Image" />
+    <p style={{marginTop : "5px"}}>
+    Then install the AWS CLI on your machine if it's not already installed and open
+     a Terminal or Command Prompt and type the following command and press Enter 
+      <center><img src="/images/posts/iam/8.png" alt="IAM Image" /></center>
+      <p style={{marginTop : "5px"}}>
+      You'll be prompted to enter your AWS Access Key ID and Secret Access Key 
+      and specify the AWS region you want to use as the default. Enter the code for your preferred region (e.g., us-east-1).
+      </p>
+      <p style={{marginTop : "5px"}}>
+      After entering all information, the AWS CLI will display a message indicating 
+      that the configuration was successful.
+      </p>
+       <p style={{marginTop : "5px"}}>
+        <center>
+        Now we are ready to try it:
+        <img src="/images/posts/iam/6.png" alt="IAM Image" />
+        it works 🥳🥳
+        </center>
+      </p>
+      <p>
+      There is a hard limit of 5000 users per account. To overcome this limitation, IAM roles come into play as another type of identity.
+      </p>
+    </p>
+   </div>
+  </div>
+  <div style={{ marginTop: "20px" }}>
+  <h3>IAM Roles</h3>
+  <div style={{ padding: "5px" }}>
+   <p>
+   IAM roles in AWS (Identity and Access Management) are a way to grant permissions to entities that you trust. Roles are not associated with a specific user or group; instead, they are assumed by trusted entities,
+    such as AWS services, applications, or users from other AWS accounts.
+   </p>
+   <h5>Key points about IAM Roles</h5>
+   <p style={{ marginTop: "5px" }}>
+   <b>Purpose:</b> Roles are used to delegate permissions, allowing
+    entities to perform actions in your AWS account on your behalf.
+   </p>
+   <p style={{ marginTop: "5px" }}>
+   <b>Temporary Credentials:</b> When a role is assumed, it provides temporary security 
+   credentials, including an access key, secret key, and session token. 
+   These credentials are used to make AWS service API requests.
+   </p>
+   <p style={{ marginTop: "5px" }}>
+    <b>Cross-Account Access:</b> Roles are commonly used for cross-account access,
+     enabling users or services in one AWS account to access resources in another account.
+   </p>
+   <p style={{ marginTop: "5px" }}>
+   <b>Service Roles:</b> Roles can be assumed by AWS services. For example, 
+   an EC2 instance can assume a role to access other AWS services securely.
+   </p>
+   <p style={{ marginTop: "5px" }}>
+   <b>Trust Policy:</b> A role has a trust policy that specifies who can assume the
+    role. It defines the trusted entities (AWS accounts, IAM users, or AWS services) 
+    that are allowed to assume the role.
+   </p>
+   <p style={{ marginTop: "5px" }}>
+   <b>Permissions Policy:</b> The role also has an associated permissions policy that
+    defines the actions allowed or denied when someone assumes the role.
+   </p>
+   <p  style={{ marginTop: "5px" }}>
+   Here's an example of a trust policy for a role:
+   </p>
+   <img src="/images/posts/iam/9.png" alt="IAM Image" />
+   <center>In this example, the role can be assumed by the EC2 service.</center>
+  </div>
+   <p  style={{ marginTop: "5px" }}>
+   Roles provide a secure and flexible way to manage access to AWS resources, especially in scenarios involving third-party applications, cross-account access, and temporary permissions.
+   </p>
+  </div>
+</div>
+ <div style={{ marginTop: "20px" }}>
+  <h3>IAM Groups</h3>
+  <div style={{ padding: "5px" }}>
+  <p>
+  A group is a collection of IAM users. Groups let you specify permissions for multiple users, which can make it easier to manage access in your AWS environment. 
+  Instead of attaching policies to individual users, you can attach policies to a group, and users added to that group inherit the permissions.
+  </p>
+  <h5>Key points about IAM Groups</h5>
+   <p style={{ marginTop: "5px" }}>
+    <b>User Management:</b> users can be added to multiple groups, and each group can have different policies attached, allowing for flexible access management.
+    When a user is added to a group, they inherit the permissions assigned to that group.
+   </p>
+   <p style={{ marginTop: "5px" }}>
+   <b>Policy Attachment:</b> policies are attached directly to groups, and users in the group inherit those policies.
+   This helps in applying a set of permissions consistently to multiple users.
+   </p>
+   <p style={{ marginTop: "5px" }}>
+   <b>Simplifies Access Management:</b> group membership simplifies access management, especially when dealing with a large number of users who require similar permissions.
+   </p>
+   <p style={{ marginTop: "5px" }}>
+   <b>No Credentials:</b> a group itself doesn't have credentials or access keys so you can't login to AWS account via a specific group. 
+   Users within the group have their own credentials.
+   </p>
+   <p style={{ marginTop: "5px" }}>
+   <b>Policy Inheritance:</b> users inherit the permissions of all the groups they belong to, as well as any individual policies that are attached directly to the user.
+IAM groups are a fundamental component of IAM that helps in organizing and managing user permissions efficiently in AWS.
+   </p>
+  </div>
+  </div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Conclusion</h3>
+  <div style={{ padding: "5px" }}>
+    IAM is a vital AWS service, globally distributed, managing resource access.
+    Users, roles, and groups, controlled by IAM policies, offer flexible access
+    management. IAM policies, in JSON or YAML, grant or deny permissions,
+    ensuring secure resource handling. IAM groups streamline access management,
+    providing a cohesive structure for permissions.
+  </div>
+</div>
