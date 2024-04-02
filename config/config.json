@@ -2,9 +2,9 @@
   "site": {
     "title": "doodooti",
     "base_url": "/",
-    "favicon": "/images/logo-img.png",
-    "logo": "/images/logo-img.png",
-    "logo_white": "/images/logo-img.png",
+    "favicon": "/images/logo_light.png",
+    "logo": "/images/logo_light.png",
+    "logo_white": "/images/logo_light.png",
     "logo_width": "50",
     "logo_height": " ",
     "logo_text": "doodooti"
