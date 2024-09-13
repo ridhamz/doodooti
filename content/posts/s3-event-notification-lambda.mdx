@@ -1,0 +1,539 @@
+---
+title: Automating S3 Events with AWS Lambda
+date: 2024-09-12T01:00:00Z
+image: /images/posts/s3-events-lambda/0.png
+categories: ["AWS", "S3", "Lambda"]
+featured: true
+draft: false
+---
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Introduction</h3>
+  <div style={{ padding: "5px" }}>
+    <p>
+      <strong>Amazon S3 events</strong> let you automatically respond to changes
+      in your storage, like when files are <strong>uploaded</strong>,{" "}
+      <strong>deleted</strong>, or <strong>modified</strong>. By linking S3 with{" "}
+      <strong>AWS Lambda</strong>, you can create <strong>workflows</strong>{" "}
+      that instantly react to these events without needing to manage servers.
+      This makes it easy to automate tasks like{" "}
+      <strong>processing uploads</strong>, <strong>resizing images</strong>, or{" "}
+      <strong>updating records</strong> in real-time. In this post, we’ll dive
+      into how you can handle <strong>S3 events</strong> with{" "}
+      <strong>AWS Lambda</strong> in a simple and efficient way.
+    </p>
+  </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Implementing S3 Event Handling with AWS Lambda</h3>
+  <div style={{ padding: "5px" }}>
+    <p>
+      To understand what exactly happens when an <strong>S3 event</strong> is
+      triggered, this post will guide you through the implementation of the
+      architecture below. By examining a practical example, we’ll explore how{" "}
+      <strong>S3 events</strong> are processed and handled using{" "}
+      <strong>AWS Lambda</strong>, providing you with a clear, hands-on
+      understanding of the entire <strong>workflow</strong>.
+    </p>
+  </div>
+  <img
+    src="/images/posts/s3-events-lambda/1.png"
+    style={{ marginTop: "5px" }}
+  />
+  <div style={{ padding: "5px" }}>
+    <p>
+      The idea is to upload an image to an <strong>S3 bucket</strong> named{" "}
+      <strong>original-images</strong>. This upload will trigger an{" "}
+      <strong>S3 event</strong> that is intercepted by a{" "}
+      <strong>Lambda function</strong> written in <strong>Node.js</strong>. The
+      Lambda function processes the incoming event, retrieves the uploaded
+      image, and generates a <strong>thumbnail version</strong>. This automated
+      process efficiently handles <strong>image resizing</strong> and stores the
+      resulting <strong>thumbnails</strong> in a designated{" "}
+      <strong>thumbnails bucket</strong>.
+    </p>
+  </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Provision resources using CloudFormation</h3>
+  <div style={{ padding: "5px" }}>
+    <p>
+      <strong>AWS CloudFormation</strong> is a service that helps you automate
+      the setup and management of AWS resources using code. Instead of manually
+      configuring individual services, you define them in a{" "}
+      <strong>JSON</strong> or <strong>YAML template</strong>. CloudFormation
+      then <strong>provisions</strong>, <strong>updates</strong>, or{" "}
+      <strong>deletes</strong> your resources in a consistent and repeatable
+      way, making <strong>infrastructure management</strong> more efficient and
+      reliable.
+    </p>
+  </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h4>Create the CloudFormation template</h4>
+  <div style={{ padding: "5px" }}>
+    <p>
+      For me, I prefer to use <strong>YAML</strong>, but feel free to use{" "}
+      <strong>JSON</strong> if you want. Let's start by creating a file called{" "}
+      <strong>deployment.yaml</strong>.
+    </p>
+  </div>
+</div>
+
+```yaml
+#deployment.yaml
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CloudFormation template to provision resources"
+```
+
+<div style={{ padding: "5px" }}>
+  <p>
+    These two lines in the template specify the version of the template format
+    being used and provide a description of the template's purpose.
+  </p>
+  <p style={{ marginTop: "2px" }}>
+    Now, let's add a <strong>Resources</strong> section to the template and
+    start by creating the logical resource for the first{" "}
+    <strong>S3 bucket</strong>. This bucket will store the{" "}
+    <strong>original images</strong> and trigger the{" "}
+    <strong>file creation event</strong>.
+  </p>
+  <p style={{ marginTop: "2px" }}>
+    <strong>Note</strong>: Resources inside the CloudFormation template are
+    called <strong>logical resources</strong>. When you create a CloudFormation
+    stack based on the template, a <strong>physical resource</strong> is created
+    for each logical resource.
+  </p>
+</div>
+
+```yaml
+Resources:
+  # First S3 Bucket
+  OriginalImagesBucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: "mz-original-images-07"
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: "s3:ObjectCreated:*"
+            Function: !GetAtt MzFunction.Arn
+```
+
+<div style={{ padding: "5px" }}>
+  <p>
+    This snippet defines the <strong>mz-original-images-07</strong> in the
+    template:
+  </p>
+  <ul>
+    <li>
+      <strong>OriginalImagesBucket</strong>: This is the logical name for the S3
+      bucket resource.
+    </li>
+    <li>
+      <strong>Type</strong>: Specifies the AWS resource type, which is{" "}
+      <strong>AWS::S3::Bucket</strong> in this case.
+    </li>
+    <li>
+      <strong>Properties</strong>: Contains the configuration details for the S3
+      bucket.
+    </li>
+    <li>
+      <strong>BucketName</strong>: The name of the bucket, which is{" "}
+      <strong>mz-original-images-07</strong>.
+    </li>
+    <li>
+      <strong>NotificationConfiguration</strong>: Configures the bucket to send
+      notifications.
+    </li>
+    <li>
+      <strong>LambdaConfigurations</strong>: Specifies the Lambda function to be
+      triggered when an object is created in the bucket.
+    </li>
+    <li>
+      <strong>Event</strong>: The type of event that triggers the Lambda
+      function, in this case, <strong>s3:ObjectCreated:*</strong>.
+    </li>
+    <li>
+      <strong>Function</strong>: Refers to the ARN of the Lambda function, which
+      is specified as <strong>!GetAtt MzFunction.Arn</strong>. The Lambda
+      function is named <strong>MzFunction</strong>.
+    </li>
+  </ul>
+</div>
+
+<div style={{ padding: "5px" }}>
+  <h5>Defines the mz-thumbnails-07 bucket</h5>
+</div>
+
+```yaml
+# Second S3 Bucket
+ThumbnailsBucket:
+  Type: "AWS::S3::Bucket"
+  Properties:
+    BucketName: "mz-thumbnails-07"
+```
+
+<div style={{ padding: "5px" }}>
+  <p style={{ marginTop: "2px" }}>
+    {" "}
+    <strong>Note:</strong> S3 bucket names need to be <strong>
+      globally unique
+    </strong>, which is why I added <strong>mz</strong> and <strong>07</strong> to
+    the names.
+  </p>
+</div>
+
+<div style={{ padding: "5px" }}>
+  <h5>Defines the MzFunction</h5>
+  <p style={{ marginTop: "2px" }}>
+    Before defining the <strong>Mz Lambda function</strong> itself, we first
+    need to define the <strong>execution role</strong> that the function will
+    use in order to react to the <strong>creation event</strong>, process the
+    file, and then store it in the other bucket. The Lambda function needs the
+    proper <strong>permissions</strong> to perform all of these actions.
+  </p>
+</div>
+
+```yaml
+# IAM Role for Lambda
+LambdaExecutionRole:
+  Type: "AWS::IAM::Role"
+  Properties:
+    RoleName: "LambdaExecutionRole"
+    AssumeRolePolicyDocument:
+      Version: "2012-10-17"
+      Statement:
+        - Effect: "Allow"
+          Principal:
+            Service: "lambda.amazonaws.com"
+          Action: "sts:AssumeRole"
+    ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+```
+
+<div style={{ padding: "5px" }}>
+  <p>
+    This defines an IAM role called <strong>LambdaExecutionRole</strong> that
+    allows AWS Lambda to assume the role and execute functions. It grants the
+    Lambda function basic execution permissions and full access to S3 through
+    managed policies.
+  </p>
+
+  <p>
+    Now, let's jump into defining our MZFunction itself
+  </p>
+</div>
+
+```yaml
+# Lambda Function
+MzFunction:
+  Type: "AWS::Lambda::Function"
+  Properties:
+    FunctionName: "mz-function"
+    Handler: "index.handler"
+    Role: !GetAtt LambdaExecutionRole.Arn
+    Runtime: "nodejs18.x"
+    Timeout: 30
+    MemorySize: 128
+    Code:
+      ZipFile: |
+        exports.handler = async (event) => {
+          console.log("Empty Lambda", event);
+          return true;
+        }
+```
+
+<div style={{ padding: "5px" }}>
+  <p>
+    This <strong>AWS CloudFormation</strong> code above creates our{" "}
+    <strong>Lambda function</strong> "mz-function" using{" "}
+    <strong>Node.js 18.x</strong>. It runs the <strong>index.handler</strong>{" "}
+    function with a <strong>30-second</strong>
+    timeout, <strong>128 MB</strong> of memory. About the function code, I've added
+    a simple
+    <strong>console.log()</strong> for now, and we'll update it later.
+  </p>
+  <p>
+    The last thing we have to do is to give the S3 for our originals image the
+    permission to triggered the Lambda function.
+  </p>
+</div>
+
+```yaml
+# S3 Bucket Notification for Lambda Trigger
+LambdaInvokePermission:
+  Type: "AWS::Lambda::Permission"
+  Properties:
+    FunctionName: !GetAtt MzFunction.Arn
+    Action: "lambda:InvokeFunction"
+    Principal: "s3.amazonaws.com"
+    SourceArn: "arn:aws:s3:::mz-original-images-07"
+```
+
+<div style={{ padding: "5px" }}>
+  <p>
+    The above AWS CloudFormation code grants S3 permission to invoke the Lambda
+    function MzFunction when an event occurs. It allows the S3 bucket
+    mz-original-images-07 to trigger the function. The Principal is set to S3,
+    specifying the source of the event.
+  </p>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Deploy the CloudFormation Template</h3>
+  <div style={{ padding: "5px" }}>
+    <p>
+      To deploy a CloudFormation template via the AWS Management Console, follow
+      these steps:
+    </p>
+    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <thead>
+        <tr>
+          <th style={{ border: "1px solid #ddd", padding: "8px" }}>Step</th>
+          <th style={{ border: "1px solid #ddd", padding: "8px" }}>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>1</td>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+            <strong>Sign in to AWS Console:</strong> Open the AWS Management
+            Console and navigate to the CloudFormation service.
+          </td>
+        </tr>
+        <tr>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>2</td>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+            <strong>Create Stack:</strong> Click on "Create stack" and select
+            "With new resources (standard)."
+          </td>
+        </tr>
+        <tr>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>3</td>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+            <strong>Upload Template:</strong> Choose "Upload a template file"
+            and select our <strong>deployment.yaml</strong> template.
+          </td>
+        </tr>
+        <tr>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>4</td>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+            <strong>Configure Stack:</strong> Enter a stack name, configure
+            stack options, and set parameters as required.
+          </td>
+        </tr>
+        <tr>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>5</td>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+            <strong>Review and Create:</strong> Review your settings, and click
+            "Create stack" to deploy the template. AWS will start provisioning
+            the resources defined in your template.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p style={{ marginTop: "5px" }}>
+      To visualize the template's logical resources, simply click the{" "}
+      <strong>View in Application Composer</strong> button.
+    </p>
+  </div>
+</div>
+
+<img
+  src="/images/posts/s3-events-lambda/2.png"
+  style={{ display: "block", margin: "0 auto" }}
+/>
+
+<div style={{ padding: "5px" }}>
+  <p>After a few minutes, our resources will be created successfully</p>
+</div>
+<img
+  src="/images/posts/s3-events-lambda/3.png"
+  style={{ display: "block", margin: "0 auto" }}
+/>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Test if the Lambda function is triggered when an image is uploaded</h3>
+  <div style={{ padding: "5px" }}>
+    <p>
+      To view the console.log output of our Lambda function, follow these steps:
+    </p>
+    <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <thead>
+        <tr>
+          <th style={{ border: "1px solid #ddd", padding: "8px" }}>Step</th>
+          <th style={{ border: "1px solid #ddd", padding: "8px" }}>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>1</td>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+            Upload an image to the S3 Originals Images bucket.
+          </td>
+        </tr>
+        <tr>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>2</td>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+            Go to the Lambda service.
+          </td>
+        </tr>
+        <tr>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>3</td>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+            Select our Lambda function: Choose the Lambda function whose logs we
+            want to view.
+          </td>
+        </tr>
+        <tr>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>4</td>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+            Go to the Monitoring tab:
+            <ul style={{ margin: "0", padding: "0 0 0 20px" }}>
+              <li>
+                Click on the Monitoring tab for the selected Lambda function.
+              </li>
+              <li>
+                Under the Logs section, click on View logs in CloudWatch. This
+                will open the CloudWatch Logs console.
+              </li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>5</td>
+          <td style={{ border: "1px solid #ddd", padding: "8px" }}>
+            View logs in CloudWatch:
+            <ul style={{ margin: "0", padding: "0 0 0 20px" }}>
+              <li>
+                In the CloudWatch Logs console, look for the log group with the
+                name /aws/lambda/mz-function.
+              </li>
+              <li>Click on the log group to view the log streams.</li>
+              <li>
+                Select the most recent log stream to see the output of our
+                console.log statements.
+              </li>
+            </ul>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<img
+  src="/images/posts/s3-events-lambda/4.png"
+  style={{ display: "block", margin: "0 auto", marginTop: "5px" }}
+/>
+<center>
+  <small>mz-function console.log output</small>
+</center>
+
+<img
+  src="/images/posts/s3-events-lambda/5.png"
+  style={{ display: "block", margin: "0 auto", marginTop: "5px" }}
+/>
+
+<center>
+  <small>mz-function configs</small>
+</center>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Add the lambda function code</h3>
+  <div style={{ padding: "5px" }}>
+  <p>To add the Lambda code, follow these steps in the AWS Management Console:</p>
+<ol>
+  <li>Navigate to the <strong>Code</strong> tab for your Lambda function.</li>
+  <li>Enter the following code:</li>
+</ol>
+
+  </div>
+</div>
+
+```js
+const s3 = new (require("aws-sdk").S3)();
+
+// Define the source and destination buckets
+const SOURCE_BUCKET = "mz-original-images-07"; // Original images bucket
+const THUMBNAILS_BUCKET = "mz-thumbnails-07"; // Thumbnails bucket
+
+exports.handler = async (event) => {
+  // Extract S3 object information from the event
+  const record = event.Records[0];
+  const bucket = record.s3.bucket.name;
+  const key = decodeURIComponent(record.s3.object.key.replace(/\+/g, " "));
+
+  // Check if the bucket is the source bucket
+  if (bucket !== SOURCE_BUCKET) {
+    console.log("Not an image upload event for the source bucket.");
+    return;
+  }
+
+  try {
+    // Get the image from S3
+    const params = {
+      Bucket: bucket,
+      Key: key,
+    };
+    const { Body } = await s3.getObject(params).promise();
+
+    // Process the image (Here, we just re-upload the original image for demonstration)
+    // To resize, you would typically need a library, but we'll skip resizing for simplicity
+
+    // Define the destination key
+    const thumbnailKey = `thumbnails/${key}`;
+
+    // Upload the image to the thumbnails bucket
+    const uploadParams = {
+      Bucket: THUMBNAILS_BUCKET,
+      Key: thumbnailKey,
+      Body: Body,
+      ContentType: "image/jpeg",
+    };
+    await s3.putObject(uploadParams).promise();
+
+    console.log(`Image uploaded to ${THUMBNAILS_BUCKET}/${thumbnailKey}`);
+  } catch (error) {
+    console.error("Error processing the image:", error);
+    throw error;
+  }
+};
+```
+
+<div style={{ marginTop: "20px" }}>
+  <div style={{ padding: "5px" }}>
+    <p>
+      the code is about extracting the image from an S3 bucket, checks if it's
+      from the source bucket, and then re-uploads it to a different S3 bucket.
+    </p>
+    <p>
+      <strong>Note 1</strong> : The image is simply copied without resizing for
+      demonstration purposes.
+    </p>
+     <p>
+      <strong>Note 2</strong> : If you encounter the error "Runtime.ImportModuleError: Error: Cannot find module 'aws-sdk'" whenever your Lambda function is triggered, try downgrading your Node.js runtime from the AWS Management Console. This issue is known to occur with the Node.js 18 runtime, and switching to an earlier version may resolve it.
+    </p>
+
+  </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Conclusion</h3>
+  <div style={{ padding: "5px" }}>
+    <p>
+      <p>
+        In this blog, we demonstrated how to deploy a CloudFormation template
+        and configure an AWS Lambda function to respond to S3 events. The Lambda
+        function is triggered when an image is uploaded to an S3 bucket,
+        allowing for automated processing or handling of the image. This setup
+        illustrates the basics of integrating S3 with Lambda to streamline
+        workflows in a serverless environment.
+      </p>
+    </p>
+  </div>
+</div>

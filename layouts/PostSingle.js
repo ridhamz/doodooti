@@ -105,155 +105,65 @@ const PostSingle = ({
         <div className="container">
           <div className="row">
             <div className="lg:col-2"></div>
-            <div className="lg:col-8  ">
+            <div className="lg:col-8">
               <article>
                 <div className="relative">
                   {image && (
-                    <Image
-                      src={image}
-                      height="500"
-                      width="1000"
-                      alt={title}
-                      className="rounded-lg"
-                    />
+                    <div>
+                      <ul className=" mt-2 flex flex-wrap items-center">
+                        {categories.map((tag, index) => (
+                          <li
+                            className="mx-2 inline-flex h-7 rounded-[35px] bg-primary px-3 text-white"
+                            key={"tag-" + index}
+                          >
+                            <Link
+                              className="capitalize"
+                              href={`/categories/${tag.replace(" ", "-")}`}
+                            >
+                              {tag}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                      <Image
+                        src={image}
+                        height="500"
+                        width="1000"
+                        alt={title}
+                        className="rounded-lg"
+                      />
+                    </div>
                   )}
-                  <ul className="absolute left-2 top-3 flex flex-wrap items-center">
-                    {categories.map((tag, index) => (
-                      <li
-                        className="mx-2 inline-flex h-7 rounded-[35px] bg-primary px-3 text-white"
-                        key={"tag-" + index}
-                      >
-                        <Link
-                          className="capitalize"
-                          href={`/categories/${tag.replace(" ", "-")}`}
-                        >
-                          {tag}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
                 {config.settings.InnerPaginationOptions.enableTop && (
                   <div className="mt-4">
                     <InnerPagination posts={posts} date={date} />
                   </div>
                 )}
-                {markdownify(title, "h3", "lg:text-[42px] mt-4")}
-                <ul className="flex items-center space-x-4">
-                  <li className="inline-flex items-center font-secondary text-xs leading-3">
-                    <FaRegCalendar className="mr-1.5" />
-                    {dateFormat(date)}
-                  </li>
-                </ul>
-                <div className="contentd">
-                  {/*  <ReactMarkdown
-                    components={{
-                      code({ inline, className, ...props }) {
-                        const hasLang = /language-(\w+)/.exec(className || "");
-                        return !inline && hasLang ? (
-                          <SyntaxHighlighter
-                            style={oneDark}
-                            language={hasLang[1]}
-                            PreTag="div"
-                            className="mockup-code scrollbar-track-base-content/5 scrollbar-thumb-base-content/40 scrollbar-track-rounded-md scrollbar-thumb-rounded scrollbar-thin"
-                            showLineNumbers={true}
-                            useInlineStyles={true}
-                          >
-                            {String(props.children).replace(/\n$/, "")}
-                          </SyntaxHighlighter>
-                        ) : (
-                          <code className={className} {...props} />
-                        );
-                      },
-                      pre: (pre) => {
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-                        const codeChunk =
-                          pre.node.children[0].children[0].value;
-
-                        // eslint-disable-next-line react-hooks/rules-of-hooks
-                        const [copyTip, setCopyTip] = useState("Copy code");
-
-                        const language =
-                          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
-                          pre.children[0]?.props.className.replace(
-                            /language-/g,
-                            ""
-                          );
-
-                        return (
-                          <div className="relative overflow-x-hidden">
-                            <button
-                              style={{
-                                right: 0,
-                              }}
-                              className="tooltip tooltip-left absolute z-40 mr-2 mt-5"
-                              data-tip={copyTip}
-                            >
-                              <CopyToClipboard
-                                text={codeChunk}
-                                // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                                onCopy={async () => {
-                                  setCopyTip("Copied");
-                                  await new Promise((resolve) =>
-                                    setTimeout(resolve, 500)
-                                  );
-                                  setCopyTip(`Copy code`);
-                                }}
-                              >
-                                <DocumentDuplicateIcon className="h-5 w-5 cursor-pointer hover:text-blue-600" />
-                              </CopyToClipboard>
-                            </button>
-                            <span
-                              style={{
-                                bottom: 0,
-                                right: 0,
-                              }}
-                              className="bg-base-content/40 text-base-300 absolute z-40 mb-5 mr-1 rounded-lg p-1 text-xs uppercase backdrop-blur-sm"
-                            >
-                              {language}
-                            </span>
-                            <pre {...pre}></pre>
-                          </div>
-                        );
-                      },
-                    }}
-                  >
-                    {post.content}
-                  </ReactMarkdown>*/}
+                <div>
+                  <div className="p-2">
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      {markdownify(
+                        title,
+                        "h3",
+                        "lg:text-[40px] mt-4 text-center "
+                      )}{" "}
+                    </h2>
+                  </div>
+                </div>
+                <div className="content">
                   <MDX components={components}>{post.content}</MDX>
+                  {/* <div className=" mt-5 w-full overflow-hidden rounded-lg border border-gray-200 bg-theme-light p-2 shadow-lg dark:bg-darkmode-theme-dark">
+                  
+                  </div> */}
                 </div>
                 {/* {config.settings.InnerPaginationOptions.enableBottom && (
                   <InnerPagination posts={posts} date={date} />
                 )} */}
               </article>
-              {/* <div className="mt-16">
-                {disqus.enable && (
-                  <DiscussionEmbed
-                    key={theme}
-                    shortname={disqus.shortname}
-                    config={disqusConfig}
-                  />
-                )}
-              </div> */}
             </div>
-            {/* <Sidebar
-              posts={posts.filter((post) => post.slug !== slug)}
-              categories={allCategories}
-            /> */}
           </div>
         </div>
-
-        {/* Related posts */}
-        {/* <div className="container mt-2">
-          <h2 className="section-title">Related Posts</h2>
-          <div className="row mt-16">
-            {relatedPosts.slice(0, 3).map((post, index) => (
-              <div key={"post-" + index} className="mb-12 lg:col-4">
-                <Post post={post} />
-              </div>
-            ))}
-          </div>
-        </div> */}
       </section>
     </Base>
   );

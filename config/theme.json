@@ -9,7 +9,7 @@
         "theme_dark": "#1a202c"
       },
       "text_color": {
-        "default": "#555",
+        "default": "#000",
         "dark": "#222",
         "light": "#999"
       }
@@ -31,7 +31,7 @@
   },
   "fonts": {
     "font_family": {
-      "primary": "Raleway:wght@400",
+      "primary": "Charter",
       "primary_type": "sans-serif",
       "secondary": "Merriweather Sans:wght@400;700",
       "secondary_type": "sans-serif"

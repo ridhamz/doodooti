@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudFormation template to provision two S3 buckets and a Lambda function with S3 triggers.
+
+Resources:
+  # First S3 Bucket
+  OriginalImagesBucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: "mz-original-images-07"
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: "s3:ObjectCreated:*"
+            Function: !GetAtt MzFunction.Arn
+
+  # S3 Bucket Notification for Lambda Trigger
+  LambdaInvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName: !GetAtt MzFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "s3.amazonaws.com"
+      SourceArn: "arn:aws:s3:::mz-original-images-07"
+
+  # Second S3 Bucket
+  ThumbnailsBucket:
+    Type: "AWS::S3::Bucket"
+    Properties:
+      BucketName: "mz-thumbnails-07"
+
+  # IAM Role for Lambda
+  LambdaExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "LambdaExecutionRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action: "sts:AssumeRole"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+
+  # Lambda Function
+  MzFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: "mz-function"
+      Handler: "index.handler"
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Runtime: "nodejs18.x"
+      Timeout: 30
+      MemorySize: 128
+      Code:
+        ZipFile: |
+          exports.handler = async (event) => {
+            console.log("Empty Lambda", event);
+            return true;
+          }
