@@ -127,13 +127,13 @@ With this approach, we can just get the resolved value cause if the promise reje
 
 The answer is JavaScript try-catch :
 
-![Maple](/static/images/async-js/10.png)
+![Maple](/images/posts/async-js/10.png)
 
 <center>Catch error using try-catch</center>
 
 try-catch is awesome but repeating it with every call of an asynchronous function is a little bit annoying, that is why we need to write a generic function that can handle any other asynchronous function.
 
-![Maple](/static/images/async-js/11.png)
+![Maple](/images/posts/async-js/11.png)
 
 <center>handleAsync function</center>
 
@@ -141,13 +141,13 @@ handleAsync takes an asynchronous callback function and returns an array contain
 
 Using JavaScript destructuring, we can get the values of the result and the error.
 
-![Maple](/static/images/async-js/12.png)
+![Maple](/images/posts/async-js/12.png)
 
 <center>Using handleAsync</center>
 
 we used getResult function cause in JavaScript await is allowed to use only in an async function but if you don’t like to use getResult() you can use an IIFE function (Immediately Invoked Function Expression).
 
-![Maple](/static/images/async-js/13.png)
+![Maple](/images/posts/async-js/13.png)
 
 <center>Using handleAsync in an IIFE function</center>
 
@@ -155,7 +155,7 @@ we used getResult function cause in JavaScript await is allowed to use only in a
 
 By default, JavaScript loops don’t support asynchronous operations but there is a way to do asynchronous operation inside a loop.
 
-![Maple](/static/images/async-js/14.png)
+![Maple](/images/posts/async-js/14.png)
 
 <center>asynchronous with map</center>
 
