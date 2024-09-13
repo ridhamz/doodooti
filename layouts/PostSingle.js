@@ -130,7 +130,7 @@ const PostSingle = ({
                         height="500"
                         width="1000"
                         alt={title}
-                        className="rounded-lg"
+                        className="mt-1 rounded-lg"
                       />
                     </div>
                   )}
