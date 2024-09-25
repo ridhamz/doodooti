@@ -75,6 +75,10 @@ const Home = ({
                   height={400}
                   priority={true}
                   alt="Banner Image"
+                  // style={{
+                  //   borderRadius: "20px", // Adjust the radius as needed
+                  //   boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)", // Optional for a subtle shadow
+                  // }}
                 />
               </div>
             )}
