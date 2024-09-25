@@ -1,0 +1,201 @@
+---
+title: The art of Javascript Generators
+date: 2024-03-20T01:00:00Z
+image: /images/posts/js-generators/0.png
+categories: ["JavaScript", "React", "NodeJS"]
+featured: true
+draft: false
+---
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Introduction</h3>
+  <div style={{ padding: "5px" }}>
+    JavaScript Generators are a powerful feature that can give you the ability
+    to create functions that can be paused and then resumed. Besides handling
+    asynchronous operations, they provide an elegant way to create iterables. In
+    this post, we will learn about generators and use it with real life examples
+    suitable for frontend ( React) as well as backend ( Node. js) development.
+  </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>What are Generators</h3>
+  <div style={{ padding: "5px" }}>
+   <p>
+  JavaScript <strong>generators</strong> are a special type of function that can be <strong>paused</strong> and <strong>resumed</strong>, making them useful for handling complex tasks. Unlike normal functions, which run until completion, generators allow you to control when and how much of the function executes at a time. They are created using the <code>function*</code> syntax.
+</p>
+
+<p>
+  The key feature of generators is the <strong>yield</strong> keyword, which is
+  used to return a value and pause the function’s execution. When you call the
+  generator again, it resumes from where it left off, continuing until the next{" "}
+  <strong>yield</strong> statement or the end of the function.
+</p>
+
+<p>
+  Generators also work as <strong>iterators</strong>, meaning they can be used
+  in loops or with <code>.next()</code> calls to retrieve values step by step.
+  Each time you invoke <code>.next()</code>, it provides the next value and
+  pauses again.
+</p>
+
+<p>
+  A common use case for generators is managing large datasets or infinite
+  sequences, as they allow you to process data incrementally, which saves
+  memory. Another popular use is in asynchronous programming, where generators
+  can make code flow more readable by pausing at certain steps.
+</p>
+
+<p>
+  Here's a quick example of a generator:
+</p>
+ </div>
+</div>
+
+```javascript
+function* numberGenerator() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+const gen = numberGenerator();
+console.log(gen.next().value); // 1
+console.log(gen.next().value); // 2
+console.log(gen.next().value); // 3
+```
+
+![generators-js](/images/posts/js-generators/1.svg)
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Frontend Use Case: Infinite Scrolling in React</h3>
+  <div style={{ padding: "5px" }}>
+    One practical application of generators in frontend development is
+    implementing infinite scrolling. Let's create a React component that uses a
+    generator to fetch data in chunks as the user scrolls
+  </div>
+</div>
+
+```javascript
+import React, { useState, useEffect } from "react";
+
+function* dataFetcher() {
+  let page = 1;
+  while (true) {
+    yield fetch(`https://api.example.com/data?page=${page}`).then((response) =>
+      response.json()
+    );
+    page++;
+  }
+}
+
+function InfiniteScrollList() {
+  const [items, setItems] = useState([]);
+  const [fetcher, setFetcher] = useState(null);
+
+  useEffect(() => {
+    setFetcher(dataFetcher());
+  }, []);
+
+  const loadMore = async () => {
+    if (fetcher) {
+      const { value } = await fetcher.next();
+      const newItems = await value;
+      setItems((prevItems) => [...prevItems, ...newItems]);
+    }
+  };
+
+  return (
+    <div>
+      <ul>
+        {items.map((item) => (
+          <li key={item.id}>{item.name}</li>
+        ))}
+      </ul>
+      <button onClick={loadMore}>Load More</button>
+    </div>
+  );
+}
+
+export default InfiniteScrollList;
+```
+
+<div style={{ marginTop: "20px" }}>
+  <div style={{ padding: "5px" }}>
+    In this example, the <strong>dataFetcher</strong> generator yields promises
+    that fetch data from an API. The React component uses this generator to load
+    more items when the user clicks a button. You could easily extend this to
+    trigger on scroll events for true infinite scrolling.
+  </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Backend Use Case: Streaming Large Datasets with Node.js</h3>
+  <div style={{ padding: "5px" }}>
+    Generators are incredibly useful in backend development, especially when
+    dealing with large datasets. Let's create a Node.js script that uses a
+    generator to stream a large dataset from a database and process it in
+    chunks.
+  </div>
+</div>
+
+```javascript
+const { MongoClient } = require("mongodb");
+
+async function* largeDatasetStreamer(collection, batchSize = 1000) {
+  let skip = 0;
+  while (true) {
+    const batch = await collection.find().skip(skip).limit(batchSize).toArray();
+    if (batch.length === 0) break;
+    yield batch;
+    skip += batchSize;
+  }
+}
+
+async function processLargeDataset() {
+  const client = new MongoClient("mongodb://localhost:27017");
+  await client.connect();
+
+  const db = client.db("mydatabase");
+  const collection = db.collection("largedata");
+
+  const streamer = largeDatasetStreamer(collection);
+
+  for await (const batch of streamer) {
+    for (const item of batch) {
+      // Process each item
+      console.log(item);
+    }
+  }
+
+  await client.close();
+}
+
+processLargeDataset().catch(console.error);
+```
+
+<div style={{ marginTop: "20px" }}>
+  <div style={{ padding: "5px" }}>
+    In this Node.js example, we create a generator function largeDatasetStreamer
+    that yields batches of data from a MongoDB collection. The
+    processLargeDataset function uses this generator to iterate over the entire
+    dataset in manageable chunks, allowing for efficient processing of large
+    amounts of data without loading everything into memory at once.
+  </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Conclusion</h3>
+  <div style={{ padding: "5px" }}>
+    JavaScript generators offer a unique and powerful way to handle asynchronous
+    operations and manage complex flows in both frontend and backend
+    development. Whether you're implementing infinite scrolling in a React
+    application or processing large datasets in Node.js, generators can help you
+    write more efficient and maintainable code. By leveraging generators, you
+    can create more responsive user interfaces and build scalable backend
+    systems that can handle large amounts of data with ease. As you've seen in
+    the examples above, generators provide a clean and intuitive API for working
+    with asynchronous and iterative processes, making them a valuable tool in
+    any JavaScript developer's toolkit.
+  </div>
+</div>

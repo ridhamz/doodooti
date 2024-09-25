@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <!-- Background -->
+  <rect width="800" height="600" fill="#f0db4f"/>
+  
+  <!-- Title -->
+  <text x="400" y="50" font-family="Arial, sans-serif" font-size="24" fill="#323330" text-anchor="middle" font-weight="bold">How JavaScript Generators Work</text>
+  
+  <!-- Generator Function -->
+  <rect x="50" y="100" width="300" height="400" fill="#323330" rx="10"/>
+  <text x="200" y="130" font-family="Arial, sans-serif" font-size="18" fill="#f0db4f" text-anchor="middle" font-weight="bold">Generator Function</text>
+  
+  <text x="70" y="170" font-family="monospace" font-size="14" fill="#f0db4f">function* numberGenerator() {</text>
+  <text x="90" y="200" font-family="monospace" font-size="14" fill="#f0db4f">yield 1;</text>
+  <text x="90" y="230" font-family="monospace" font-size="14" fill="#f0db4f">yield 2;</text>
+  <text x="90" y="260" font-family="monospace" font-size="14" fill="#f0db4f">yield 3;</text>
+  <text x="70" y="290" font-family="monospace" font-size="14" fill="#f0db4f">}</text>
+  
+  <text x="70" y="330" font-family="monospace" font-size="14" fill="#f0db4f">const gen = numberGenerator();</text>
+  
+  <!-- Execution Flow -->
+  <rect x="450" y="100" width="300" height="400" fill="#4f4f4f" rx="10"/>
+  <text x="600" y="130" font-family="Arial, sans-serif" font-size="18" fill="#ffffff" text-anchor="middle" font-weight="bold">Execution Flow</text>
+  
+  <text x="470" y="170" font-family="monospace" font-size="14" fill="#ffffff">console.log(gen.next());</text>
+  <text x="490" y="200" font-family="monospace" font-size="14" fill="#f0db4f">// {value: 1, done: false}</text>
+  
+  <text x="470" y="240" font-family="monospace" font-size="14" fill="#ffffff">console.log(gen.next());</text>
+  <text x="490" y="270" font-family="monospace" font-size="14" fill="#f0db4f">// {value: 2, done: false}</text>
+  
+  <text x="470" y="310" font-family="monospace" font-size="14" fill="#ffffff">console.log(gen.next());</text>
+  <text x="490" y="340" font-family="monospace" font-size="14" fill="#f0db4f">// {value: 3, done: false}</text>
+  
+  <text x="470" y="380" font-family="monospace" font-size="14" fill="#ffffff">console.log(gen.next());</text>
+  <text x="490" y="410" font-family="monospace" font-size="14" fill="#f0db4f">// {value: undefined, done: true}</text>
+  
+  <!-- Arrows -->
+  <line x1="355" y1="200" x2="445" y2="200" stroke="#323330" stroke-width="2"/>
+  <polygon points="445,200 435,195 435,205" fill="#323330"/>
+  
+  <line x1="355" y1="260" x2="445" y2="260" stroke="#323330" stroke-width="2"/>
+  <polygon points="445,260 435,255 435,265" fill="#323330"/>
+  
+  <line x1="355" y1="320" x2="445" y2="320" stroke="#323330" stroke-width="2"/>
+  <polygon points="445,320 435,315 435,325" fill="#323330"/>
+  
+  <!-- Explanation -->
+  <text x="400" y="520" font-family="Arial, sans-serif" font-size="14" fill="#323330" text-anchor="middle">Generators pause execution at each 'yield' statement,</text>
+  <text x="400" y="540" font-family="Arial, sans-serif" font-size="14" fill="#323330" text-anchor="middle">resuming when 'next()' is called. They return an object</text>
+  <text x="400" y="560" font-family="Arial, sans-serif" font-size="14" fill="#323330" text-anchor="middle">with the yielded value and a 'done' status.</text>
+</svg>
