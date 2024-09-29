@@ -1,0 +1,343 @@
+---
+title: Deep Dive into TypeScript Decorators
+date: 2024-09-29T01:00:00Z
+image: /images/posts/ts-deco/0.svg
+categories: ['TypeScript', 'Javascript']
+featured: true
+draft: false
+---
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Introduction</h3>
+  <div style={{ padding: "5px" }}>
+    <p>
+      <strong>TypeScript decorators</strong> are a powerful feature that allows you to add 
+      <strong>metadata</strong> to classes, methods, properties, and parameters. They provide 
+      a way to modify or enhance the behavior of your code without changing its structure. 
+      In this blog post, we'll explore advanced examples and use cases of 
+      <strong>TypeScript decorators</strong>.
+    </p>
+  
+  </div>
+  <img src="/images/posts/ts-deco/1.svg" alt="decorators" />
+    <div style={{ padding: "5px" }}>
+     <p>
+      <strong>Decorators</strong> are a <strong>stage 3 proposal</strong> for JavaScript and are available 
+      as an <strong>experimental feature</strong> in TypeScript. They are 
+      <strong>functions</strong> that can be attached to classes, methods, properties, 
+      or parameters to modify their behavior or add <strong>metadata</strong>.
+    </p>
+    </div>
+   <div style={{ padding: "5px" }}>
+      <p>
+      To use <strong>decorators</strong> in TypeScript, you need to enable the 
+      <strong>experimentalDecorators</strong> compiler option in your <strong>tsconfig.json</strong>:
+    </p>
+   </div>
+
+</div>
+
+```typescript
+{
+  "compilerOptions": {
+    "experimentalDecorators": true
+  }
+}
+```
+
+<div style={{ marginTop: '20px' }}>
+  <h3>Class Decorators</h3>
+  <div style={{ padding: '5px' }}>
+    <p>
+      Class decorators are applied to the <strong>constructor</strong> of the
+      class and can be used to <strong>observe</strong>, <strong>modify</strong>,
+      or <strong>replace</strong> a <strong>class definition</strong>.
+    </p>
+    <h4>Example: Singleton Pattern</h4>
+  </div>
+</div>
+
+```typescript
+function Singleton<T extends { new (...args: any[]): {} }>(constructor: T) {
+  let instance: T;
+
+  return class extends constructor {
+    constructor(...args: any[]) {
+      if (instance) {
+        return instance;
+      }
+      super(...args);
+      instance = this;
+    }
+  };
+}
+```
+
+<div style={{ padding: '5px' }}>
+  <p>
+    This is a <strong>class decorator</strong> that implements the{' '}
+    <strong>Singleton pattern</strong>. It returns a <strong>new class</strong>{' '}
+    that <strong>extends</strong> the <strong>original constructor</strong>. The
+    new class ensures only <strong>one instance</strong> is created by{' '}
+    <strong>checking</strong> if an instance already <strong>exists</strong>{' '}
+    before creating a <strong>new one</strong>.
+  </p>
+</div>
+
+```typescript
+@Singleton
+class Database {
+  constructor(private readonly url: string) {
+    console.log(`Connecting to ${url}...`);
+  }
+}
+```
+
+<div style={{ padding: '5px' }}>
+  <p>
+    This is the class we're applying the <strong>Singleton pattern</strong> to.
+    It has a <strong>private constructor</strong> (to prevent{' '}
+    <strong>direct instantiation</strong>) and a <strong>connect method</strong>
+  </p>
+</div>
+
+```typescript
+const db1 = new Database('MySQL');
+const db2 = new Database('PostgreSQL');
+
+console.log(db1 === db2); // true
+db1.connect(); // "Connected to MySQL"
+db2.connect(); // "Connected to MySQL"
+```
+
+<div style={{ padding: '5px' }}>
+  <p>
+    This demonstrates the <strong>Singleton behavior</strong>. Despite trying to
+    create <strong>two instances</strong> with <strong>different names</strong>,
+    we end up with the <strong>same instance</strong>. Both <strong>db1</strong>{' '}
+    and <strong>db2</strong> refer to the <strong>same object</strong> (the{' '}
+    <strong>first one created</strong>), which is why they both{' '}
+    <strong>connect</strong> to "<strong>MySQL</strong>".
+  </p>
+</div>
+
+<div style={{ marginTop: '20px' }}>
+  <h3>Method Decorators</h3>
+  <div style={{ padding: '5px' }}>
+    <p>
+      Method decorators are applied to the <strong>Property Descriptor</strong>{' '}
+      for the method, allowing you to <strong>observe</strong>,{' '}
+      <strong>modify</strong>, or <strong>replace</strong> a{' '}
+      <strong>method definition</strong>.
+    </p>
+    <h4>Example: Memoization</h4>
+    <p>
+      Memoization is an <strong>optimization technique</strong> where the{' '}
+      <strong>result</strong> of a function is
+      <strong>cached</strong>, so if the same <strong>inputs</strong> are passed
+      again, the <strong>cached result</strong> is returned instead of recalculating
+      it, <strong>improving performance</strong> by avoiding
+      <strong>redundant computations</strong>.
+    </p>
+    <h5>Decorator Factory:</h5>
+  </div>
+</div>
+
+```typescript
+function Memoize() {
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+  ) {
+    // ... (implementation will be explained next)
+  };
+}
+```
+
+<div style={{ padding: '5px' }}>
+  <p>
+    This is a decorator factory, which is a function that returns the actual
+    decorator. Think of it as a way to customize our decorator before applying
+    it. The decorator function it returns is the real workhorse, taking three
+    important parameters:
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <strong>target</strong>
+        </td>
+        <td>
+          The prototype of the class (for instance methods) or the constructor
+          (for static methods).
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <strong>propertyKey</strong>
+        </td>
+        <td>The name of the method being decorated.</td>
+      </tr>
+      <tr>
+        <td>
+          <strong>descriptor</strong>
+        </td>
+        <td>An object that describes the method being decorated.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div style={{ padding: '5px' }}>
+  <h5>Memoization Logic:</h5>
+</div>
+
+```typescript
+const originalMethod = descriptor.value;
+const cache = new Map<string, any>();
+
+descriptor.value = function (...args: any[]) {
+  const key = JSON.stringify(args);
+  if (cache.has(key)) {
+    return cache.get(key);
+  }
+  const result = originalMethod.apply(this, args);
+  cache.set(key, result);
+  return result;
+};
+
+return descriptor;
+```
+
+<div style={{ padding: '5px' }}>
+  <p>
+    This is the <strong>heart</strong> of our memoization technique. We begin by{' '}
+    <strong>storing</strong> the original method and{' '}
+    <strong>setting up a cache</strong> using a Map. Then, we{' '}
+    <strong>replace</strong> the original method with a{' '}
+    <strong>new function</strong> that does some clever work. It{' '}
+    <strong>turns</strong> the arguments into a <strong>string key</strong>,{' '}
+    <strong>checks</strong> if we've seen these arguments before in our cache,
+    and if so, <strong>returns</strong> the stored result. If it's a{' '}
+    <strong>new set</strong> of arguments, it <strong>calls</strong> the
+    original method, <strong>saves</strong> the result for future use, and{' '}
+    <strong>returns</strong> it. This way, we{' '}
+    <strong>avoid unnecessary recalculations</strong>. Lastly, we
+    <strong>return</strong> the modified descriptor, <strong>
+      completing
+    </strong> our memoization process.
+  </p>
+</div>
+
+<div style={{ padding: '5px' }}>
+  <h5>Usage of the Memoize Decorator:</h5>
+</div>
+
+```typescript
+class Calculator {
+  @Memoize()
+  fibonacci(n: number): number {
+    if (n <= 1) return n;
+    return this.fibonacci(n - 1) + this.fibonacci(n - 2);
+  }
+}
+
+const calculator = new Calculator();
+console.log(calculator.fibonacci(10)); // 55
+console.log(calculator.fibonacci(10)); // 55 (cached result)
+```
+
+<div style={{ marginTop: '20px' }}>
+  <h3>Property Decorators</h3>
+  <div style={{ padding: '5px' }}>
+    <p>
+      <strong>Property decorators</strong> are <strong>powerful tools</strong>{' '}
+      that let you <strong>enhance</strong> or <strong>alter</strong> how a
+      class property behaves. They act like <strong>watchful guardians</strong>,
+      allowing you to
+      <strong>observe</strong> when a property is <strong>accessed</strong> or <strong>
+        changed
+      </strong>, and even <strong>modify</strong> its behavior. This can be incredibly{' '}
+      <strong>useful</strong> for adding <strong>validation</strong>, <strong>
+        logging
+      </strong>, or
+      <strong>transforming data</strong> automatically whenever the property is
+      used.
+    </p>
+    <h4>Example: Validation</h4>
+  </div>
+</div>
+
+```typescript
+function MinLength(length: number) {
+  return function (target: any, propertyKey: string) {
+    let value: string;
+    const getter = function () {
+      return value;
+    };
+    const setter = function (newVal: string) {
+      if (newVal.length < length) {
+        throw new Error(
+          `${propertyKey} must be at least ${length} characters long.`
+        );
+      }
+      value = newVal;
+    };
+    Object.defineProperty(target, propertyKey, {
+      get: getter,
+      set: setter,
+    });
+  };
+}
+```
+
+<div style={{ padding: '5px' }}>
+  <p>
+    This <strong>MinLength</strong> decorator ensures that the{' '}
+    <strong>username</strong> property always has a
+    <strong>minimum length</strong>, throwing an <strong>error</strong> if the
+    requirement is not met.
+  </p>
+  <h5>Usage of the MinLength Decorator:</h5>
+</div>
+
+```typescript
+class User {
+  @MinLength(5)
+  username: string;
+}
+
+const user = new User();
+user.username = 'John'; // Error: username must be at least 5 characters long.
+```
+
+<div style={{ marginTop: '20px' }}>
+  <h3>Conclusion</h3>
+  <div style={{ padding: '5px' }}>
+    <p>
+      <strong>TypeScript decorators</strong> are a{' '}
+      <strong>powerful feature</strong> that can significantly enhance your
+      code's <strong>functionality</strong> and <strong>readability</strong>.
+      From implementing
+      <strong>design patterns</strong> like <strong>Singleton</strong> to adding{' '}
+      <strong>validation</strong> and <strong>memoization</strong>, decorators offer
+      a <strong>clean</strong> and <strong>reusable way</strong> to <strong>
+        modify
+      </strong> or <strong>extend</strong> your
+      <strong>classes</strong> and <strong>methods</strong>. While they're still
+      an <strong>experimental feature</strong>, their potential to{' '}
+      <strong>simplify complex logic</strong> and promote{' '}
+      <strong>better code organization</strong> is immense. As you've seen in
+      these examples, decorators can be incredibly <strong>versatile</strong>,
+      allowing you to write more <strong>expressive</strong> and{' '}
+      <strong>maintainable TypeScript code</strong>.
+    </p>
+  </div>
+</div>

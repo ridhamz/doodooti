@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <!-- Background -->
+  <rect width="400" height="300" fill="#f0f0f0"/>
+  
+  <!-- Original Class/Method -->
+  <rect x="150" y="100" width="100" height="60" fill="#3178c6" rx="10"/>
+  <text x="200" y="135" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Original</text>
+  
+  <!-- Decorator -->
+  <path d="M100 80 L300 80 L300 180 L100 180 Z" fill="none" stroke="#4CAF50" stroke-width="3" stroke-dasharray="5,5"/>
+  <text x="200" y="70" font-family="Arial, sans-serif" font-size="16" fill="#4CAF50" text-anchor="middle">@Decorator</text>
+  
+  <!-- Arrow -->
+  <path d="M200 180 L200 220" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#333"/>
+    </marker>
+  </defs>
+  
+  <!-- Modified Class/Method -->
+  <rect x="150" y="220" width="100" height="60" fill="#4CAF50" rx="10"/>
+  <text x="200" y="255" font-family="Arial, sans-serif" font-size="14" fill="white" text-anchor="middle">Modified</text>
+  
+  <!-- Explanation -->
+  <text x="200" y="20" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333" text-anchor="middle">How Decorators Work</text>
+  <text x="200" y="290" font-family="Arial, sans-serif" font-size="14" fill="#333" text-anchor="middle">Decorators wrap and modify the original target</text>
+</svg>
