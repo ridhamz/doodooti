@@ -99,13 +99,13 @@ const Home = ({
       <section className="section">
         <div className="container">
           <div className="row items-start">
-            <div className="mb-12 lg:col-12 lg:mb-0">
+            <div className="mb-1 lg:col-12 lg:mb-0">
               {/* <About />
               <Services /> */}
               {/* <Teams /> */}
               {/* Recent Posts */}
               {recent_posts.enable && (
-                <div className="section pt-0">
+                <div className="section mt-0 pt-0">
                   {markdownify(
                     recent_posts.title,
                     'h2',
