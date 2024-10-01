@@ -1,22 +1,22 @@
-import config from "@config/config.json";
-import Base from "@layouts/Baseof";
-import Contact from "@layouts/Contact";
-import About from "@layouts/components/About";
-import ImageFallback from "@layouts/components/ImageFallback";
-import Pagination from "@layouts/components/Pagination";
-import Services from "@layouts/components/Services";
-import Teams from "@layouts/components/Teams";
-import Post from "@layouts/partials/Post";
-import Sidebar from "@layouts/partials/Sidebar";
-import { getListPage, getSinglePage } from "@lib/contentParser";
-import { getTaxonomy } from "@lib/taxonomyParser";
-import dateFormat from "@lib/utils/dateFormat";
-import { sortByDate } from "@lib/utils/sortFunctions";
-import { markdownify } from "@lib/utils/textConverter";
-import Link from "next/link";
-import toast from "react-hot-toast";
-import { BsArrowLeftShort, BsArrowRightShort } from "react-icons/bs";
-import { FaRegCalendar } from "react-icons/fa";
+import config from '@config/config.json';
+import Base from '@layouts/Baseof';
+import Contact from '@layouts/Contact';
+import About from '@layouts/components/About';
+import ImageFallback from '@layouts/components/ImageFallback';
+import Pagination from '@layouts/components/Pagination';
+import Services from '@layouts/components/Services';
+import Teams from '@layouts/components/Teams';
+import Post from '@layouts/partials/Post';
+import Sidebar from '@layouts/partials/Sidebar';
+import { getListPage, getSinglePage } from '@lib/contentParser';
+import { getTaxonomy } from '@lib/taxonomyParser';
+import dateFormat from '@lib/utils/dateFormat';
+import { sortByDate } from '@lib/utils/sortFunctions';
+import { markdownify } from '@lib/utils/textConverter';
+import Link from 'next/link';
+import toast from 'react-hot-toast';
+import { BsArrowLeftShort, BsArrowRightShort } from 'react-icons/bs';
+import { FaRegCalendar } from 'react-icons/fa';
 const { blog_folder, pagination } = config.settings;
 
 const Home = ({
@@ -40,7 +40,7 @@ const Home = ({
       <section className="section banner relative pb-0">
         <ImageFallback
           className="absolute bottom-0 left-0 z-[-1] w-full"
-          src={"/images/banner-bg-shape.svg"}
+          src={'/images/banner-bg-shape.svg'}
           width={1905}
           height={295}
           alt="banner-shape"
@@ -52,13 +52,13 @@ const Home = ({
             <div
               className={
                 banner.image_enable
-                  ? "mt-12 text-center lg:col-6 lg:mt-0 lg:text-left"
-                  : "mt-12 text-center lg:col-12 lg:mt-0 lg:text-left"
+                  ? 'mt-1 text-center lg:col-6 lg:mt-0 lg:text-left'
+                  : 'mt-12 text-center lg:col-12 lg:mt-0 lg:text-left'
               }
             >
               <div className="banner-title">
                 {/* {markdownify(banner.title, "h2", "mt-0")} */}
-                {markdownify(banner.title_small, "h3")}
+                {markdownify(banner.title_small, 'h3')}
               </div>
               {/* {markdownify(banner.content, "p", "mt-1")} */}
               <div className="mt-1">
@@ -67,7 +67,7 @@ const Home = ({
               </div>
             </div>
             {banner.image_enable && (
-              <div className="col-9 lg:col-6">
+              <div className="col-12 lg:col-6">
                 <ImageFallback
                   className="mx-auto rounded object-contain"
                   src={banner.image}
@@ -84,6 +84,15 @@ const Home = ({
             )}
           </div>
         </div>
+
+        <div className="col-12">
+          <img
+            className="mx-auto rounded object-contain"
+            src={banner.cover}
+            priority={true}
+            alt="cover"
+          />
+        </div>
       </section>
 
       {/* Home main */}
@@ -99,8 +108,8 @@ const Home = ({
                 <div className="section pt-0">
                   {markdownify(
                     recent_posts.title,
-                    "h2",
-                    "text-center p-1 mb-6"
+                    'h2',
+                    'text-center p-1 mb-6'
                   )}
                   <div className="">
                     <div className="row">
@@ -145,11 +154,11 @@ export default Home;
 
 // for homepage data
 export const getStaticProps = async () => {
-  const homepage = await getListPage("content/_index.mdx");
+  const homepage = await getListPage('content/_index.mdx');
   const { frontmatter } = homepage;
   const { banner, featured_posts, recent_posts, promotion } = frontmatter;
   const posts = getSinglePage(`content/${blog_folder}`);
-  const categories = getTaxonomy(`content/${blog_folder}`, "categories");
+  const categories = getTaxonomy(`content/${blog_folder}`, 'categories');
 
   const categoriesWithPostsCount = categories.map((category) => {
     const filteredPosts = posts.filter((post) =>
