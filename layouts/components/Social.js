@@ -88,7 +88,7 @@ const Social = ({ source, className }) => {
             target="_blank"
             rel="noopener noreferrer nofollow"
           >
-            <IoLogoLinkedin className="w-100" size={30} />
+            <IoLogoLinkedin size={28} />
           </a>
         </li>
       )}
