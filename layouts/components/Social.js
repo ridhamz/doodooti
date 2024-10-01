@@ -30,7 +30,7 @@ import {
   IoLogoYoutube,
   IoMail,
   IoLogoStackoverflow,
-} from "react-icons/io5";
+} from 'react-icons/io5';
 
 const Social = ({ source, className }) => {
   const {
@@ -88,7 +88,7 @@ const Social = ({ source, className }) => {
             target="_blank"
             rel="noopener noreferrer nofollow"
           >
-            <IoLogoLinkedin className="w-100" />
+            <IoLogoLinkedin className="w-100" size={30} />
           </a>
         </li>
       )}
@@ -100,7 +100,7 @@ const Social = ({ source, className }) => {
             target="_blank"
             rel="noopener noreferrer nofollow"
           >
-            <IoLogoGithub />
+            <IoLogoGithub size={30} />
           </a>
         </li>
       )}
@@ -113,7 +113,7 @@ const Social = ({ source, className }) => {
             target="_blank"
             rel="noopener noreferrer nofollow"
           >
-            <IoLogoMedium />
+            <IoLogoMedium size={30} />
           </a>
         </li>
       )}
@@ -134,7 +134,7 @@ const Social = ({ source, className }) => {
       {email && (
         <li className="inline-block">
           <a aria-label="email" href={`mailto:${email}`}>
-            <IoMail />
+            <IoMail size={30} />
           </a>
         </li>
       )}
