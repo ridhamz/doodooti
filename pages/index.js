@@ -48,7 +48,7 @@ const Home = ({
         />
 
         <div className="container mt-5">
-          <div className="row flex-wrap-reverse items-center justify-center lg:flex-row">
+          <div className="row mt-10 flex-wrap-reverse items-center justify-center lg:flex-row ">
             <div
               className={
                 banner.image_enable

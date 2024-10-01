@@ -1,13 +1,13 @@
-import Logo from "@components/Logo";
-import menu from "@config/menu.json";
-import socical from "@config/social.json";
-import Social from "@layouts/components/Social";
-import ThemeSwitcher from "@layouts/components/ThemeSwitcher";
-import SearchModal from "@partials/SearchModal";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import { IoSearch } from "react-icons/io5";
+import Logo from '@components/Logo';
+import menu from '@config/menu.json';
+import socical from '@config/social.json';
+import Social from '@layouts/components/Social';
+import ThemeSwitcher from '@layouts/components/ThemeSwitcher';
+import SearchModal from '@partials/SearchModal';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { IoSearch } from 'react-icons/io5';
 
 const Header = () => {
   // distructuring the main menu from menu object
@@ -23,9 +23,9 @@ const Header = () => {
   //stop scrolling when nav is open
   useEffect(() => {
     if (showMenu) {
-      document.body.classList.add("menu-open");
+      document.body.classList.add('menu-open');
     } else {
-      document.body.classList.remove("menu-open");
+      document.body.classList.remove('menu-open');
     }
   }, [showMenu]);
 
@@ -38,7 +38,7 @@ const Header = () => {
         <div className="flex items-center space-x-4 xl:space-x-8">
           <div
             className={`collapse-menu ${
-              !showMenu && "translate-x-full"
+              !showMenu && 'translate-x-full'
             } lg:flex lg:translate-x-0`}
           >
             <button
@@ -65,7 +65,7 @@ const Header = () => {
                         className={`nav-link ${
                           menu.children
                             .map((c) => c.url)
-                            .includes(router.asPath) && "active"
+                            .includes(router.asPath) && 'active'
                         } inline-flex items-center`}
                       >
                         {menu.name}
@@ -85,7 +85,7 @@ const Header = () => {
                             <Link
                               href={child.url}
                               className={`nav-dropdown-link block ${
-                                router.asPath === child.url && "active"
+                                router.asPath === child.url && 'active'
                               }`}
                             >
                               {child.name}
@@ -99,7 +99,7 @@ const Header = () => {
                       <Link
                         href={menu.url}
                         className={`nav-link block ${
-                          router.asPath === menu.url && "active"
+                          router.asPath === menu.url && 'active'
                         }`}
                       >
                         {menu.name}
@@ -112,7 +112,7 @@ const Header = () => {
             {/* header social */}
           </div>
           <Social source={socical} className="socials" />
-          <ThemeSwitcher />
+          {/* <ThemeSwitcher /> */}
 
           {/* Header search */}
           <div
