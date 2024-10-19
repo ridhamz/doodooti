@@ -84,7 +84,14 @@ const Home = ({
             )}
           </div>
         </div>
-
+        <div className="col-12">
+          <img
+            className="mx-auto rounded object-contain"
+            src={banner.aws_cert}
+            priority={true}
+            alt="cover"
+          />
+        </div>
         <div className="col-12">
           <img
             className="mx-auto rounded object-contain"

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1584 396">
+  <!-- White Background -->
+  <rect width="1584" height="396" fill="white"/>
+  
+  <!-- Decorative elements -->
+  <path 
+    d="M1184 48 L1484 198 L1184 348 L884 198 Z" 
+    fill="#232F3E"
+    opacity="0.1"
+  />
+  
+  <path 
+    d="M792 98 L992 198 L792 298 L592 198 Z" 
+    fill="#232F3E"
+    opacity="0.1"
+  />
+  
+  <path 
+    d="M400 148 L500 198 L400 248 L300 198 Z" 
+    fill="#232F3E"
+    opacity="0.1"
+  />
+  
+  <!-- Main certification hexagon -->
+  <g transform="translate(400, 198)">
+    <!-- Outer hexagon -->
+    <path 
+      d="M0 -120 L104 -60 L104 60 L0 120 L-104 60 L-104 -60 Z" 
+      fill="#232F3E"
+      stroke="#FF9900"
+      stroke-width="4"
+    />
+    <!-- Inner hexagon -->
+    <path 
+      d="M0 -90 L78 -45 L78 45 L0 90 L-78 45 L-78 -45 Z" 
+      fill="#FF9900"
+    />
+    <!-- AWS Smile -->
+    <path
+      d="M-30 0 Q0 30 30 0"
+      fill="none"
+      stroke="#232F3E"
+      stroke-width="8"
+      stroke-linecap="round"
+    />
+  </g>
+  
+  <!-- Text elements -->
+  <text x="792" y="180" font-family="Arial, sans-serif" font-size="48" fill="#232F3E" text-anchor="middle" font-weight="bold">AWS Certified</text>
+  <text x="792" y="240" font-family="Arial, sans-serif" font-size="40" fill="#FF9900" text-anchor="middle" font-weight="bold">Solutions Architect</text>
+</svg>
