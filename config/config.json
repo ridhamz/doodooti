@@ -10,8 +10,8 @@
     "logo_text": "doodooti"
   },
   "settings": {
-    "theme_switcher": true,
-    "default_theme": "system",
+    "theme_switcher": false,
+    "default_theme": "#f2f2f2",
     "pagination": 3,
     "InnerPaginationOptions": {
       "enableTop": false,

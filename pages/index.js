@@ -14,6 +14,7 @@ import dateFormat from '@lib/utils/dateFormat';
 import { sortByDate } from '@lib/utils/sortFunctions';
 import { markdownify } from '@lib/utils/textConverter';
 import Link from 'next/link';
+import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { BsArrowLeftShort, BsArrowRightShort } from 'react-icons/bs';
 import { FaRegCalendar } from 'react-icons/fa';
@@ -33,6 +34,10 @@ const Home = ({
     (post) => post.frontmatter.featured
   );
   const showPosts = pagination;
+
+  useEffect(() => {
+    localStorage.clear(); // Clear all localStorage data
+  }, []);
 
   return (
     <Base>
@@ -118,6 +123,10 @@ const Home = ({
                     'h2',
                     'text-center p-1 mb-6'
                   )}
+                  {/* <center className="mb-3">
+                    {' '}
+                    <small>( Hey doodooti 👋 )</small>
+                  </center> */}
                   <div className="">
                     <div className="row">
                       {sortPostByDate.slice(0, 6).map((post) => (
