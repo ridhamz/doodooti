@@ -1,6 +1,6 @@
 ---
 title: AWS EC2 Bastion Hosts
-date: 2024-11-09T01:00:00Z
+date: 2024-11-10T01:00:00Z
 image: /images/posts/aws-bastian-host/0.svg
 categories: ['AWS', 'EC2']
 featured: true
@@ -109,52 +109,23 @@ Parameters:
 ```
 
 <div style={{ padding: '5px' }}>
-<p>This is the <strong>Parameters section</strong> of a <strong>CloudFormation template</strong>. It defines three parameters to configure the IP ranges for a VPC and its subnets:</p>
+<p>This is the <strong>Parameters section</strong> of a <strong>CloudFormation template</strong>. 
+It defines three parameters to configure the IP ranges for a VPC and its subnets:</p>
 
-<table border="1">
-  <thead>
-    <tr>
-      <th>
-        <strong>Parameter</strong>
-      </th>
-      <th>
-        <strong>Description</strong>
-      </th>
-      <th>
-        <strong>Default Value</strong>
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        <strong>VpcCidr</strong>
-      </td>
-      <td>Sets the IP range (CIDR block) for the entire VPC</td>
-      <td>
-        <code>10.0.0.0/16</code>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <strong>PublicSubnetCidr</strong>
-      </td>
-      <td>Sets the IP range for the public subnet</td>
-      <td>
-        <code>10.0.1.0/24</code>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <strong>PrivateSubnetCidr</strong>
-      </td>
-      <td>Sets the IP range for the private subnet</td>
-      <td>
-        <code>10.0.2.0/24</code>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<ol>
+  <li style={{ marginTop: '5px' }}>
+    <strong>VpcCidr</strong>: Sets the IP range (CIDR block) for the entire VPC.
+    Default Value: <code>10.0.0.0/16</code>
+  </li>
+  <li style={{ marginTop: '5px' }}>
+    <strong>PublicSubnetCidr</strong>: Sets the IP range for the public subnet.
+    Default Value: <code>10.0.1.0/24</code>
+  </li>
+  <li style={{ marginTop: '5px' }}>
+    <strong>PrivateSubnetCidr</strong>: Sets the IP range for the private
+    subnet. Default Value: <code>10.0.2.0/24</code>
+  </li>
+</ol>
 
 <p>These parameters make the VPC’s IP ranges easy 
 to customize without changing the template code directly.</p>
@@ -193,49 +164,23 @@ Resources:
 <div style={{ padding: '5px' }}>
 <p>This section defines the <strong>resources</strong> that will be created when the CloudFormation template is deployed:</p>
 
-<table border="1">
-  <thead>
-    <tr>
-      <th>
-        <strong>Resource</strong>
-      </th>
-      <th>
-        <strong>Description</strong>
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>
-        <strong>MzVPC</strong>
-      </td>
-      <td>
-        Creates a <strong>VPC</strong> with the CIDR block provided by the{' '}
-        <code>VpcCidr</code> parameter. It also enables DNS hostnames and
-        support for DNS.
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <strong>InternetGateway</strong>
-      </td>
-      <td>
-        Creates an <strong>Internet Gateway</strong> (IGW) to provide internet
-        access to the VPC.
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <strong>AttachGateway</strong>
-      </td>
-      <td>
-        Attaches the <strong>Internet Gateway</strong> to the{' '}
-        <strong>VPC</strong> so that resources in the VPC can access the
-        internet.
-      </td>
-    </tr>
-  </tbody>
-</table>
+<ol>
+  <li style={{ marginTop: '5px' }}>
+    <strong>MzVPC</strong>: Creates a <strong>VPC</strong> with the CIDR block
+    provided by the <code>VpcCidr</code> parameter. It also enables DNS
+    hostnames and support for DNS.
+  </li>
+  <li style={{ marginTop: '5px' }}>
+    <strong>InternetGateway</strong>: Creates an{' '}
+    <strong>Internet Gateway</strong> (IGW) to provide internet access to the
+    VPC.
+  </li>
+  <li style={{ marginTop: '5px' }}>
+    <strong>AttachGateway</strong>: Attaches the{' '}
+    <strong>Internet Gateway</strong> to the <strong>VPC</strong> so that
+    resources in the VPC can access the internet.
+  </li>
+</ol>
 
 <p>
   These resources define the basic network infrastructure: a VPC, internet
@@ -451,7 +396,7 @@ PrivateSubnetRouteTableAssociation:
     <p style={{ marginTop: '5px' }}>
       After that, click on the Launch Instance button and wait for the EC2
       instance to be provisioned. Once the instance is running, go to the
-      Instance Details section to verify the Public IP and the Instance State
+      Instance Details section to verify the Public IP other configurations.
     </p>
     <center>
       <img
@@ -465,51 +410,28 @@ PrivateSubnetRouteTableAssociation:
 <div style={{ marginTop: '20px' }}>
   <h4>SSH the Bastian Host</h4>
   <div style={{ padding: '5px' }}>
-    <table>
-      <thead>
-        <tr>
-          <th colspan="2">Steps to SSH into the Bastion Host</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <strong>1. Open the terminal</strong>
-          </td>
-          <td>Navigate to the folder where you downloaded the key pair.</td>
-        </tr>
-        <tr>
-          <td>
-            <strong>2. Change the permissions for the key pair</strong>
-          </td>
-          <td>
-            Type the following command in the terminal:
-            <br />
-            <code>chmod 400 "MZ-Bastina-Host-Key.pem"</code>
-            <br />
-            If you're using Windows, use the following command:
-            <br />
-            <code>icacls .\MZ-Bastina-Host-Key.pem /grant username:F</code>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>3. Copy the public IP address</strong>
-          </td>
-          <td>Copy the public IP address of the Bastion Host.</td>
-        </tr>
-        <tr>
-          <td>
-            <strong>4. Run the SSH command</strong>
-          </td>
-          <td>
-            Run the following SSH command to connect:
-            <br />
-            <code>ssh -i .\MZ-Bastina-Host-Key.pem ec2-user@35.91.217.143</code>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <p>
+  To establish an SSH connection to an AWS EC2 instance, follow these steps:
+</p>
+   <ol>
+  <li style={{marginTop: "5px"}}>
+    <strong>Open the terminal</strong>: Navigate to the folder where you downloaded the key pair.
+  </li>
+  <li style={{marginTop: "5px"}}>
+    <strong>Change the permissions for the key pair</strong>: Type the following command in the terminal:
+    <br />
+    <code>chmod 400 "MZ-Bastina-Host-Key.pem"</code>
+  </li>
+  <li style={{marginTop: "5px"}}>
+    <strong>Copy the public IP address</strong>: Copy the public IP address of the Bastion Host.
+  </li>
+  <li style={{marginTop: "5px"}}>
+    <strong>Run the SSH command</strong>: Run the following SSH command to connect:
+    <br />
+    <code>ssh -i .\MZ-Bastina-Host-Key.pem ec2-user@35.91.217.143</code>
+  </li>
+</ol>
+
   </div>
 </div>
 <center>
@@ -590,6 +512,15 @@ PrivateSubnetRouteTableAssociation:
 <div style={{ marginTop: '20px' }}>
   <h3>Conclusion</h3>
   <div style={{ padding: '5px' }}>
-  <p>In summary, setting up a Bastion Host is a key step in building secure access points within your AWS environment. By carefully configuring networking, security groups, and SSH keys, we’ve established a secure gateway that allows controlled access to private instances. This setup enhances security by isolating access to sensitive resources, while also simplifying management and reducing potential vulnerabilities. With a properly configured Bastion Host, you now have a secure and efficient way to access your private infrastructure.</p>
+    <p>
+      In summary, setting up a Bastion Host is a key step in building secure
+      access points within your AWS environment. By carefully configuring
+      networking, security groups, and SSH keys, we’ve established a secure
+      gateway that allows controlled access to private instances. This setup
+      enhances security by isolating access to sensitive resources, while also
+      simplifying management and reducing potential vulnerabilities. With a
+      properly configured Bastion Host, you now have a secure and efficient way
+      to access your private infrastructure.
+    </p>
   </div>
 </div>
