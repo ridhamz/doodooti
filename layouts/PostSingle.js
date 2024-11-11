@@ -27,6 +27,7 @@ import bash from "react-syntax-highlighter/dist/cjs/languages/prism/bash";
 import markdown from "react-syntax-highlighter/dist/cjs/languages/prism/markdown";
 import json from "react-syntax-highlighter/dist/cjs/languages/prism/json";
 import lua from "react-syntax-highlighter/dist/cjs/languages/prism/lua";
+import yaml from "react-syntax-highlighter/dist/cjs/languages/prism/yaml";
 import { useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import DocumentDuplicateIcon from "@heroicons/react/24/outline/DocumentDuplicateIcon";
@@ -39,7 +40,7 @@ SyntaxHighlighter.registerLanguage("scss", scss);
 SyntaxHighlighter.registerLanguage("bash", bash);
 SyntaxHighlighter.registerLanguage("markdown", markdown);
 SyntaxHighlighter.registerLanguage("json", json);
-SyntaxHighlighter.registerLanguage("lua", lua);
+SyntaxHighlighter.registerLanguage("yaml", yaml);
 
 const components = {
   Box: (props) => <div {...props} />,

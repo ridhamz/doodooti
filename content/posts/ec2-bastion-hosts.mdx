@@ -1,0 +1,595 @@
+---
+title: AWS EC2 Bastion Hosts
+date: 2024-11-09T01:00:00Z
+image: /images/posts/aws-bastian-host/0.svg
+categories: ['AWS', 'EC2']
+featured: true
+draft: false
+---
+
+<div style={{ marginTop: '20px' }}>
+  <h3>Introduction</h3>
+  <div style={{ padding: '5px' }}>
+    <p>
+    In cloud infrastructure, <strong>security</strong> is essential, and a <strong>bastion host</strong> is key to keeping your private network safe. Acting as a secure gateway, it protects access to <strong>private resources</strong>. In this post, we’ll explore AWS EC2 bastion hosts, their role in <strong>network security</strong>, and the best ways to set them up for maximum security.
+</p>
+
+  </div>
+</div>
+
+<div style={{ marginTop: '20px' }}>
+  <h3>What a Bastion Host Is and How It Works</h3>
+  <div style={{ padding: '5px' }}>
+    <p>
+      Simply put, a <strong>bastion host</strong> (also called a “jump box”) is
+      a server specifically designed to provide{' '}
+      <strong>secure, limited access</strong> to your private network. Instead
+      of allowing direct access to your servers, which increases vulnerability,
+      a bastion host acts as a go-between.
+    </p>
+  </div>
+  <center><img src="/images/posts/aws-bastian-host/1.png" /></center>
+   <div style={{ padding: '5px' }}>
+    <p>
+    Think of a <strong>bastion host</strong> as a secure gateway or checkpoint into your <strong>private network</strong>. It's an <strong>EC2 instance</strong> that sits in a <strong>public subnet</strong> and acts as the only entry point to your private EC2 instances. When you need to access a private server, you first <strong>SSH</strong> into the bastion host, and from there, you can SSH into your private servers. 
+</p>
+<p>
+    Imagine a <strong>bastion host</strong> as a secure entry point to your <strong>private network</strong>. It’s an <strong>EC2 instance</strong> in a public subnet that acts as the only door to reach your private servers. If you need to access a server in the private network, you start by connecting to the bastion host, and then from there, you can connect to the private servers.
+</p>
+
+<p>
+  The bastion host is set up with <strong>strict security rules</strong>,
+  usually allowing only <strong>SSH</strong> access through{' '}
+  <strong>port 22</strong> and accepting connections only from approved{' '}
+  <strong>IP addresses</strong>, this way your <strong>private servers</strong>{' '}
+  stay protected from the public internet, but authorized admins can still
+  access them securely.
+</p>
+
+  </div>
+</div>
+
+<div style={{ marginTop: '20px' }}>
+  <h3>From Concept to Execution</h3>
+  <div style={{ padding: '5px' }}>
+    <p>
+      Throughout this post, I will guide you through the architecture outlined
+      below in order to build a Bastion Host.
+    </p>
+  </div>
+</div>
+<center>
+  <img src="/images/posts/aws-bastian-host/2.png" />
+</center>
+<div style={{ padding: '5px' }}>
+  <p>
+    The idea is to provision <strong>two EC2 servers</strong> in a{' '}
+    <strong>private subnet</strong> and another <strong>EC2 server</strong> in a{' '}
+    <strong>public subnet</strong> to serve as a <strong>jump box</strong>. The{' '}
+    <strong>jump box</strong> will allow the <strong>admin</strong> to securely
+    access the <strong>private instances</strong> for{' '}
+    <strong>configuration</strong> and other administrative tasks.
+  </p>
+</div>
+
+<div style={{ marginTop: '20px' }}>
+  <h3>Provision Resources</h3>
+  <div style={{ padding: '5px' }}>
+    <p>
+      I’ll use a CloudFormation template to set up the VPC, subnets, and route
+      tables. For the EC2 instances, I’ll set them up through the AWS Console to
+      make things easier to follow.
+    </p>
+    <p>
+      First, create a file named BastionHosts.yaml and start by adding the
+      following code:
+    </p>
+  </div>
+</div>
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'VPC with Public and Private Subnets'
+
+Parameters:
+  VpcCidr:
+    Type: String
+    Default: '10.0.0.0/16'
+    Description: CIDR block for the VPC
+
+  PublicSubnetCidr:
+    Type: String
+    Default: '10.0.1.0/24'
+    Description: CIDR block for Public Subnet
+
+  PrivateSubnetCidr:
+    Type: String
+    Default: '10.0.2.0/24'
+    Description: CIDR block for Private Subnet
+```
+
+<div style={{ padding: '5px' }}>
+<p>This is the <strong>Parameters section</strong> of a <strong>CloudFormation template</strong>. It defines three parameters to configure the IP ranges for a VPC and its subnets:</p>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>
+        <strong>Parameter</strong>
+      </th>
+      <th>
+        <strong>Description</strong>
+      </th>
+      <th>
+        <strong>Default Value</strong>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>VpcCidr</strong>
+      </td>
+      <td>Sets the IP range (CIDR block) for the entire VPC</td>
+      <td>
+        <code>10.0.0.0/16</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>PublicSubnetCidr</strong>
+      </td>
+      <td>Sets the IP range for the public subnet</td>
+      <td>
+        <code>10.0.1.0/24</code>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>PrivateSubnetCidr</strong>
+      </td>
+      <td>Sets the IP range for the private subnet</td>
+      <td>
+        <code>10.0.2.0/24</code>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>These parameters make the VPC’s IP ranges easy 
+to customize without changing the template code directly.</p>
+<p>Next, we need to add the Resources section, which will define the logical 
+resources that will become physical resources when the template is deployed.</p>
+</div>
+
+```yaml
+Resources:
+  # VPC
+  MzVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidr
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: Mz VPC
+
+  # Internet Gateway
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: Mz IGW
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref MzVPC
+      InternetGatewayId: !Ref InternetGateway
+```
+
+<div style={{ padding: '5px' }}>
+<p>This section defines the <strong>resources</strong> that will be created when the CloudFormation template is deployed:</p>
+
+<table border="1">
+  <thead>
+    <tr>
+      <th>
+        <strong>Resource</strong>
+      </th>
+      <th>
+        <strong>Description</strong>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>MzVPC</strong>
+      </td>
+      <td>
+        Creates a <strong>VPC</strong> with the CIDR block provided by the{' '}
+        <code>VpcCidr</code> parameter. It also enables DNS hostnames and
+        support for DNS.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>InternetGateway</strong>
+      </td>
+      <td>
+        Creates an <strong>Internet Gateway</strong> (IGW) to provide internet
+        access to the VPC.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>AttachGateway</strong>
+      </td>
+      <td>
+        Attaches the <strong>Internet Gateway</strong> to the{' '}
+        <strong>VPC</strong> so that resources in the VPC can access the
+        internet.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  These resources define the basic network infrastructure: a VPC, internet
+  access, and the necessary connection between them.
+</p>
+</div>
+
+```yaml
+# Public Subnet
+PublicSubnet:
+  Type: AWS::EC2::Subnet
+  Properties:
+    VpcId: !Ref MzVPC
+    CidrBlock: !Ref PublicSubnetCidr
+    AvailabilityZone: !Select [0, !GetAZs '']
+    MapPublicIpOnLaunch: true
+    Tags:
+      - Key: Name
+        Value: Public Subnet
+
+# Private Subnet
+PrivateSubnet:
+  Type: AWS::EC2::Subnet
+  Properties:
+    VpcId: !Ref MzVPC
+    CidrBlock: !Ref PrivateSubnetCidr
+    AvailabilityZone: !Select [0, !GetAZs '']
+    Tags:
+      - Key: Name
+        Value: Private Subnet
+```
+
+<div style={{ padding: '5px' }}>
+<p>The code above defines the <strong>public subnet</strong> and <strong>private subnet</strong> that will be created in the VPC:</p>
+
+<ol>
+  <li style={{ marginTop: '5px' }}>
+    <strong>PublicSubnet</strong>: Creates a <strong>public subnet</strong>{' '}
+    within the VPC using the CIDR block provided by the{' '}
+    <code>PublicSubnetCidr</code> parameter. It is placed in the first available
+    availability zone and enables public IP addresses for instances launched in
+    this subnet.
+  </li>
+  <li style={{ marginTop: '5px' }}>
+    <strong>PrivateSubnet</strong>: Creates a <strong>private subnet</strong>{' '}
+    within the VPC using the CIDR block provided by the{' '}
+    <code>PrivateSubnetCidr</code> parameter. It is also placed in the first
+    available availability zone, but it does not automatically assign public IPs
+    to instances launched in this subnet.
+  </li>
+</ol>
+
+<p>
+  These subnets define the network layout: one for public-facing resources and
+  one for private, internal resources.
+</p>
+
+</div>
+
+```yaml
+# Public Route Table
+PublicRouteTable:
+  Type: AWS::EC2::RouteTable
+  Properties:
+    VpcId: !Ref MzVPC
+    Tags:
+      - Key: Name
+        Value: Public Route Table
+
+PublicRoute:
+  Type: AWS::EC2::Route
+  DependsOn: AttachGateway
+  Properties:
+    RouteTableId: !Ref PublicRouteTable
+    DestinationCidrBlock: 0.0.0.0/0
+    GatewayId: !Ref InternetGateway
+
+PublicSubnetRouteTableAssociation:
+  Type: AWS::EC2::SubnetRouteTableAssociation
+  Properties:
+    SubnetId: !Ref PublicSubnet
+    RouteTableId: !Ref PublicRouteTable
+
+# Private Route Table
+PrivateRouteTable:
+  Type: AWS::EC2::RouteTable
+  Properties:
+    VpcId: !Ref MzVPC
+    Tags:
+      - Key: Name
+        Value: Private Route Table
+
+PrivateSubnetRouteTableAssociation:
+  Type: AWS::EC2::SubnetRouteTableAssociation
+  Properties:
+    SubnetId: !Ref PrivateSubnet
+    RouteTableId: !Ref PrivateRouteTable
+```
+
+<div style={{ padding: '5px' }}>
+<p>The code above defines the route tables for both the <strong>public</strong> and <strong>private</strong> subnets, as well as the routes that connect them to the internet:</p>
+
+<ol>
+  <li style={{ marginTop: '5px' }}>
+    <strong>PublicRouteTable</strong>: Creates a <strong>route table</strong>{' '}
+    for the public subnet and associates it with the VPC.
+  </li>
+  <li style={{ marginTop: '5px' }}>
+    <strong>PublicRoute</strong>: Defines the route for the public subnet,
+    allowing traffic to the internet via the <strong>Internet Gateway</strong>.
+    The route is set to <code>0.0.0.0/0</code>, meaning it allows all traffic to
+    the internet.
+  </li>
+  <li style={{ marginTop: '5px' }}>
+    <strong>PublicSubnetRouteTableAssociation</strong>: Associates the public
+    subnet with the <strong>public route table</strong> so that instances in the
+    public subnet can route traffic to the internet.
+  </li>
+  <li style={{ marginTop: '5px' }}>
+    <strong>PrivateRouteTable</strong>: Creates a <strong>route table</strong>{' '}
+    for the private subnet, again associating it with the VPC but without a
+    direct route to the internet.
+  </li>
+  <li style={{ marginTop: '5px' }}>
+    <strong>PrivateSubnetRouteTableAssociation</strong>: Associates the private
+    subnet with the <strong>private route table</strong>, ensuring instances in
+    the private subnet route traffic only internally.
+  </li>
+</ol>
+
+<p>
+  These route tables and associations ensure that the public subnet can access
+  the internet while the private subnet remains isolated or has controlled
+  access to the internet.
+</p>
+</div>
+
+<div style={{ padding: '5px' }}>
+  <p>
+    Now that our template is ready, let's deploy it using the CloudFormation
+    service in the AWS Console UI. If you click the View in Infrastructure
+    Composer button, you will see the infrastructure as code that we created, as
+    represented in the image below
+  </p>
+</div>
+<center>
+  <img src="/images/posts/aws-bastian-host/3.png" />
+</center>
+
+<div style={{ padding: '5px' }}>
+  <p>Our physical resources are now ready:</p>
+</div>
+<center>
+  <img src="/images/posts/aws-bastian-host/4.png" />
+</center>
+
+<div style={{ marginTop: '20px' }}>
+  <h3>Provision The Bastian Host</h3>
+  <div style={{ padding: '5px' }}>
+    <p>
+      As mentioned in the previous section, I will use the Console UI to
+      provision the EC2 instances. Go to the EC2 service, and click on Launch
+      Instance to begin.
+    </p>
+    <p>
+      After entering the name and selecting the type for the EC2 instance, we
+      need to specify a key pair to enable SSH access from our computer to the
+      Bastion Host.
+    </p>
+    <center>
+      <img
+        src="/images/posts/aws-bastian-host/7.png"
+        style={{ marginTop: '5px' }}
+      />
+    </center>
+    <p style={{ marginTop: '5px' }}>
+      If you don't already have a key pair, simply click on the Create new key
+      pair button
+    </p>
+    <center>
+      <center>
+        <img
+          src="/images/posts/aws-bastian-host/5.png"
+          style={{ marginTop: '5px' }}
+        />
+      </center>
+    </center>
+    <p style={{ marginTop: '5px' }}>
+      Under the network settings, we need to select the VPC we created and the
+      public subnet, as the jump box needs to be located in the public subnet
+    </p>
+    <center>
+      <img
+        src="/images/posts/aws-bastian-host/8.png"
+        style={{ marginTop: '5px' }}
+      />
+    </center>
+    <p style={{ marginTop: '5px' }}>
+      The final step is to set the security group, we will create a new one and
+      allow SSH connections from anywhere
+    </p>
+    <center>
+      <img
+        src="/images/posts/aws-bastian-host/9.png"
+        style={{ marginTop: '5px' }}
+      />
+    </center>
+    <p style={{ marginTop: '5px' }}>
+      <b>Note:</b> We can specify a specific CIDR IP block in the source of the
+      security group for better security, but for the purposes of this post, we
+      will allow access from anywhere.
+    </p>
+    <p style={{ marginTop: '5px' }}>
+      After that, click on the Launch Instance button and wait for the EC2
+      instance to be provisioned. Once the instance is running, go to the
+      Instance Details section to verify the Public IP and the Instance State
+    </p>
+    <center>
+      <img
+        src="/images/posts/aws-bastian-host/11.png"
+        style={{ marginTop: '5px' }}
+      />
+    </center>
+  </div>
+</div>
+
+<div style={{ marginTop: '20px' }}>
+  <h4>SSH the Bastian Host</h4>
+  <div style={{ padding: '5px' }}>
+    <table>
+      <thead>
+        <tr>
+          <th colspan="2">Steps to SSH into the Bastion Host</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong>1. Open the terminal</strong>
+          </td>
+          <td>Navigate to the folder where you downloaded the key pair.</td>
+        </tr>
+        <tr>
+          <td>
+            <strong>2. Change the permissions for the key pair</strong>
+          </td>
+          <td>
+            Type the following command in the terminal:
+            <br />
+            <code>chmod 400 "MZ-Bastina-Host-Key.pem"</code>
+            <br />
+            If you're using Windows, use the following command:
+            <br />
+            <code>icacls .\MZ-Bastina-Host-Key.pem /grant username:F</code>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong>3. Copy the public IP address</strong>
+          </td>
+          <td>Copy the public IP address of the Bastion Host.</td>
+        </tr>
+        <tr>
+          <td>
+            <strong>4. Run the SSH command</strong>
+          </td>
+          <td>
+            Run the following SSH command to connect:
+            <br />
+            <code>ssh -i .\MZ-Bastina-Host-Key.pem ec2-user@35.91.217.143</code>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<center>
+  <img src="/images/posts/aws-bastian-host/10.png" />
+</center>
+<center>
+  <small>Successfully connected to the Jump Box 🥳</small>
+</center>
+
+<div style={{ marginTop: '20px' }}>
+  <h3>Provision The Private Instances</h3>
+  <div style={{ padding: '5px' }}>
+    <p>
+      The steps to provision the private instances, <strong>Server 1</strong>{' '}
+      and <strong>Server 2</strong>, are the same as those for the{' '}
+      <strong>Bastion Host</strong> instance. The only difference is in the{' '}
+      <strong>Network settings</strong>, as these instances are{' '}
+      <strong>private</strong> and need to be located in the{' '}
+      <strong>private subnet</strong> without enabling the{' '}
+      <strong>Auto-assign public IP</strong> option.
+    </p>
+  </div>
+</div>
+<center>
+  <img src="/images/posts/aws-bastian-host/12.png" />
+</center>
+
+<div style={{ padding: '5px' }}>
+  <p>
+    About the <strong>security group</strong>, it will be different because we
+    need to allow <strong>SSH access</strong> only from the{' '}
+    <strong>Jump Box</strong>. We can do this by changing the{' '}
+    <strong>source type</strong> to <strong>custom</strong>, then selecting the{' '}
+    <strong>security group</strong> of the Jump Box as the source.
+  </p>
+</div>
+<center>
+  <img src="/images/posts/aws-bastian-host/13.png" />
+</center>
+<div style={{ padding: '5px' }}>
+  <p>
+    Now that our three <strong>instances</strong> are running, it's time to test
+    the <strong>connectivity</strong> from the <strong>Jump Box</strong> to the
+    private instances, <strong>Server 1</strong> and <strong>Server 2</strong>.
+  </p>
+</div>
+<center>
+  <img src="/images/posts/aws-bastian-host/14.png" />
+</center>
+<div style={{ padding: '5px' }}>
+  <p>
+    In order to do an SSH connection from our Bastion Host to the private
+    servers, we first need to upload the key pairs of Server 1 and Server 2 to
+    the Bastion Host and we can use the <strong>scp</strong> command.
+  </p>
+</div>
+<center>
+  <img src="/images/posts/aws-bastian-host/15.png" />
+</center>
+
+<div style={{ padding: '5px' }}>
+  <p>
+    Now, let's try to make the SSH connection from the jump box. For that, we
+    need to use the private IPs of Server 1 (ip: 10.0.2.252) and Server 2 (ip:
+    10.0.2.164).
+  </p>
+</div>
+<center>
+  <img src="/images/posts/aws-bastian-host/16.png" />
+  <small>Successfully connected to the Server 1 🥳</small>
+</center>
+
+<center>
+  <img src="/images/posts/aws-bastian-host/17.png" />
+  <small>Successfully connected to the Server 2 🥳</small>
+</center>
+
+<div style={{ marginTop: '20px' }}>
+  <h3>Conclusion</h3>
+  <div style={{ padding: '5px' }}>
+  <p>In summary, setting up a Bastion Host is a key step in building secure access points within your AWS environment. By carefully configuring networking, security groups, and SSH keys, we’ve established a secure gateway that allows controlled access to private instances. This setup enhances security by isolating access to sensitive resources, while also simplifying management and reducing potential vulnerabilities. With a properly configured Bastion Host, you now have a secure and efficient way to access your private infrastructure.</p>
+  </div>
+</div>
