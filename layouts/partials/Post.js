@@ -1,9 +1,9 @@
-import config from "@config/config.json";
-import ImageFallback from "@layouts/components/ImageFallback";
-import dateFormat from "@lib/utils/dateFormat";
-import Link from "next/link";
-import { BsArrowRightShort } from "react-icons/bs";
-import { FaRegCalendar, FaUserAlt } from "react-icons/fa";
+import config from '@config/config.json';
+import ImageFallback from '@layouts/components/ImageFallback';
+import dateFormat from '@lib/utils/dateFormat';
+import Link from 'next/link';
+import { BsArrowRightShort } from 'react-icons/bs';
+import { FaRegCalendar, FaUserAlt } from 'react-icons/fa';
 
 const Post = ({ post }) => {
   const { summary_length, blog_folder } = config.settings;
@@ -14,7 +14,7 @@ const Post = ({ post }) => {
   return (
     <div
       className="post border-black-600 h-100 rounded-md border-2 border-solid p-2"
-      style={{ height: "100%" }}
+      style={{ height: '100%' }}
     >
       <div className="">
         {post.frontmatter.image && (
@@ -30,11 +30,11 @@ const Post = ({ post }) => {
           {post.frontmatter.categories.map((tag, index) => (
             <li
               className="mx-2 inline-flex h-7 rounded-[35px] bg-primary px-3 text-white"
-              key={"tag-" + index}
+              key={'tag-' + index}
             >
               <Link
                 className="capitalize"
-                href={`/categories/${tag.replace(" ", "-")}`}
+                href={`/categories/${tag.toLowerCase().replace(' ', '-')}`}
               >
                 {tag}
               </Link>

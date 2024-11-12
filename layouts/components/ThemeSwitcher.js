@@ -17,7 +17,8 @@ const ThemeSwitcher = () => {
           className="ml-1 mr-1 h-8 w-8 rounded p-1 sm:ml-4"
           onClick={() =>
             setTheme(
-              theme === 'dark' || resolvedTheme === 'dark' ? 'light' : 'dark'
+              'light'
+              // theme === 'dark' || resolvedTheme === 'dark' ? 'light' : 'dark'
             )
           }
         >
