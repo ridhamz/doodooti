@@ -76,13 +76,13 @@ draft: false
   <h3>Provision Resources</h3>
   <div style={{ padding: '5px' }}>
     <p>
-      I’ll use a CloudFormation template to set up the VPC, subnets, and route
-      tables. For the EC2 instances, I’ll set them up through the AWS Console to
-      make things easier to follow.
+      I’ll use a CloudFormation template to set up the VPC, subnets, the
+      internet gateway and route tables. For the EC2 instances, I’ll set them up
+      through the AWS Console to make things easier to follow.
     </p>
     <p>
-      First, create a file named BastionHosts.yaml and start by adding the
-      following code:
+      First, create a file named <strong>BastionHosts.yaml</strong> and start by
+      adding the following code:
     </p>
   </div>
 </div>
@@ -331,11 +331,30 @@ PrivateSubnetRouteTableAssociation:
 </center>
 
 <div style={{ padding: '5px' }}>
-  <p>Our physical resources are now ready:</p>
+  <p>
+    Now we're ready to proceed with deploying our template. Simply wait until
+    the CloudFormation stack status updates to <strong>CREATE_COMPLETE</strong>
+    .{' '}
+  </p>
 </div>
+
+<center>
+  <img src="/images/posts/aws-bastian-host/18.png" />
+  <small>Stack created successfully</small>
+</center>
+
 <center>
   <img src="/images/posts/aws-bastian-host/4.png" />
+  <small>Our physical resources are now ready</small>
 </center>
+
+<div style={{ padding: '5px' }}>
+  <p>
+    {' '}
+    Now that our VPC architecture is ready, we can begin creating the EC2 instances
+    to complete the Bastion Host setup.{' '}
+  </p>
+</div>
 
 <div style={{ marginTop: '20px' }}>
   <h3>Provision The Bastian Host</h3>
@@ -410,28 +429,33 @@ PrivateSubnetRouteTableAssociation:
 <div style={{ marginTop: '20px' }}>
   <h4>SSH the Bastian Host</h4>
   <div style={{ padding: '5px' }}>
-  <p>
-  To establish an SSH connection to an AWS EC2 instance, follow these steps:
-</p>
-   <ol>
-  <li style={{marginTop: "5px"}}>
-    <strong>Open the terminal</strong>: Navigate to the folder where you downloaded the key pair.
-  </li>
-  <li style={{marginTop: "5px"}}>
-    <strong>Change the permissions for the key pair</strong>: Type the following command in the terminal:
-    <br />
-    <code>chmod 400 "MZ-Bastina-Host-Key.pem"</code>
-  </li>
-  <li style={{marginTop: "5px"}}>
-    <strong>Copy the public IP address</strong>: Copy the public IP address of the Bastion Host.
-  </li>
-  <li style={{marginTop: "5px"}}>
-    <strong>Run the SSH command</strong>: Run the following SSH command to connect:
-    <br />
-    <code>ssh -i .\MZ-Bastina-Host-Key.pem ec2-user@35.91.217.143</code>
-  </li>
-</ol>
-
+    <p>
+      In my case, the public IP address for the Bastion Host is "35.91.217.143,"
+      and the key name is "MZ-Bastina-Host-Key.pem", so to establish an SSH
+      connection, follow these steps:
+    </p>
+    <ol>
+      <li style={{ marginTop: '5px' }}>
+        <strong>Open the terminal</strong>: Navigate to the folder where you
+        downloaded the key pair.
+      </li>
+      <li style={{ marginTop: '5px' }}>
+        <strong>Change the permissions for the key pair</strong>: Type the
+        following command in the terminal:
+        <br />
+        <code>chmod 400 "MZ-Bastina-Host-Key.pem"</code>
+      </li>
+      <li style={{ marginTop: '5px' }}>
+        <strong>Copy the public IP address</strong>: Copy the public IP address
+        of the Bastion Host.
+      </li>
+      <li style={{ marginTop: '5px' }}>
+        <strong>Run the SSH command</strong>: Run the following SSH command to
+        connect:
+        <br />
+        <code>ssh -i .\MZ-Bastina-Host-Key.pem ec2-user@35.91.217.143</code>
+      </li>
+    </ol>
   </div>
 </div>
 <center>
