@@ -67,8 +67,9 @@ const Home = ({
               </div>
               {/* {markdownify(banner.content, "p", "mt-1")} */}
               <div className="mt-1">
-                Hi there! 🖖 My name is Ridha
-                <p>{"A Senior Software Engineer with a passion for crafting solutions and exploring the limitless potential of AWS"}</p>
+                Hi there! 🖖 My name is <b>Ridha</b>
+                <p>A Senior <b>Software Engineer</b> with a passion for crafting solutions 
+                and exploring the limitless potential of  <b>AWS</b></p>
               </div>
             </div>
             {banner.image_enable && (
