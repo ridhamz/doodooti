@@ -87,6 +87,7 @@ const ImageWithFullscreen = ({ src, alt, ...props }) => {
             <Maximize2 size={24} />
           </button>
     </div> */}
+    
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 p-1">
         <img
           src={src}
@@ -259,6 +260,7 @@ const PostSingle = ({
                 <div className="relative">
                   {image && (
                     <div>
+                      <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 p-1">
                       <ul className=" mt-2 flex flex-wrap items-center">
                         {categories.map((tag, index) => (
                           <li
@@ -281,6 +283,7 @@ const PostSingle = ({
                         alt={title}
                         className="mt-1 rounded-lg"
                       />
+                      </div>
                     </div>
                   )}
                 </div>
