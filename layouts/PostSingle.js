@@ -212,20 +212,6 @@ const components = {
   },
 };
 
-function code({ className, ...props }) {
-  return <SyntaxHighlighter PreTag="div" {...props} />;
-  const match = /language-(\w+)/.exec(className || "");
-  return match ? (
-    <SyntaxHighlighter
-      language={match[1]}
-      PreTag="div"
-      {...props}
-      style={{ border: "1px solid red" }}
-    />
-  ) : (
-    <code className={className} {...props} />
-  );
-}
 
 const PostSingle = ({
   frontmatter,
