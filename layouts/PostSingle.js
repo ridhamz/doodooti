@@ -181,7 +181,7 @@ const PostSingle = ({
                           >
                             <Link
                               className="capitalize"
-                              href={`/categories/${tag.replace(" ", "-")}`}
+                              href={`/categories/${tag.toLowerCase().replace(" ", "-")}`}
                             >
                               {tag}
                             </Link>
