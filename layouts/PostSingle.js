@@ -138,9 +138,9 @@ const ImageWithFullscreen = ({ src, alt, ...props }) => {
              <div 
                 className="absolute bottom-4 left-1/2 transform -translate-x-1/2
                          bg-black/50 text-white px-3 py-1 rounded-full
-                         text-sm backdrop-blur-sm"
+                         text-sm backdrop-blur-sm "
               >
-                {Math.round(scale * 100)}%
+             <center>   {Math.round(scale * 100)}%</center>
                 <div className="flex gap-2">
           <button
               onClick={handleZoomIn}
