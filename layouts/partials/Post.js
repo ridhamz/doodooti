@@ -18,6 +18,10 @@ const Post = ({ post }) => {
     >
       <div className="">
         {post.frontmatter.image && (
+           <Link
+           href={`/${blog_folder}/${post.slug}`}
+           className="block hover:text-primary"
+         >
           <ImageFallback
             className="rounded"
             src={post.frontmatter.image}
@@ -25,6 +29,7 @@ const Post = ({ post }) => {
             width={405}
             height={208}
           />
+          </Link>
         )}
         <ul className="items-center p-1">
           {post.frontmatter.categories.map((tag, index) => (

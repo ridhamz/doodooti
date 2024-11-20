@@ -49,7 +49,6 @@ import { Maximize2, RotateCcw, X, ZoomIn, ZoomOut } from 'lucide-react';
 const ImageWithFullscreen = ({ src, alt, ...props }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [scale, setScale] = useState(1);
-  const imageRef = useRef(null)
 
    const handleZoomIn = (e) => {
     e.stopPropagation();
