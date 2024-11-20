@@ -3,6 +3,7 @@ import Base from '@layouts/Baseof';
 import Contact from '@layouts/Contact';
 import About from '@layouts/components/About';
 import ImageFallback from '@layouts/components/ImageFallback';
+import NewsletterSignup from '@layouts/components/NewsLetter';
 import Pagination from '@layouts/components/Pagination';
 import Services from '@layouts/components/Services';
 import Teams from '@layouts/components/Teams';
@@ -154,6 +155,7 @@ const Home = ({
 
               {/* <Contact /> */}
             </div>
+            {/* <NewsletterSignup/> */}
             {/* sidebar 
             <Sidebar
               className={"lg:mt-[9.5rem]"}

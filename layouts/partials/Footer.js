@@ -4,15 +4,18 @@ import menu from "@config/menu.json";
 import social from "@config/social.json";
 import ImageFallback from "@layouts/components/ImageFallback";
 import Logo from "@layouts/components/Logo";
+import NewsletterSignup from "@layouts/components/NewsLetter";
 import { markdownify } from "@lib/utils/textConverter";
 import Link from "next/link";
 
 const Footer = () => {
   const { copyright, footer_content } = config.params;
   return (
-    <footer className="section relative mt-12 pt-[70px] pb-[50px]">
+    <>   
+     {/* <NewsletterSignup/> */}
+    <footer className="section relative mt-0 pt-[50px] pb-[50px]">
       <ImageFallback
-        className="-z-[1] object-cover object-left  md:object-top"
+        className="-z-[1] object-cover object-left  md:object-top " 
         src="/images/footer-bg-shape.svg"
         alt="footer background"
         fill={true}
@@ -43,7 +46,7 @@ const Footer = () => {
         {/* copyright */}
         {markdownify(copyright, "p")}
       </div>
-    </footer>
+    </footer></>
   );
 };
 
