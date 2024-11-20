@@ -49,8 +49,12 @@ import { Maximize2, RotateCcw, X, ZoomIn, ZoomOut } from 'lucide-react';
 const ImageWithFullscreen = ({ src, alt, ...props }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const imageRef = useRef(null);
 
-   const handleZoomIn = (e) => {
+  const handleZoomIn = (e) => {
     e.stopPropagation();
     setScale(prev => Math.min(prev + 0.25, 3)); // Max zoom 3x
   };
@@ -63,48 +67,76 @@ const ImageWithFullscreen = ({ src, alt, ...props }) => {
   const resetZoom = (e) => {
     e.stopPropagation();
     setScale(1);
+    setPosition({ x: 0, y: 0 });
   };
 
   const toggleFullscreen = (e) => {
     e.stopPropagation();
     setIsFullscreen(!isFullscreen);
+    if (isFullscreen) {
+      setScale(1);
+      setPosition({ x: 0, y: 0 });
+    }
+  };
+
+  const handleMouseDown = (e) => {
+    if (scale > 1) {
+      e.preventDefault();
+      setIsDragging(true);
+      setDragStart({ 
+        x: e.clientX - position.x, 
+        y: e.clientY - position.y 
+      });
+    }
+  };
+
+  const handleMouseMove = (e) => {
+    if (isDragging && scale > 1) {
+      const rect = imageRef.current.getBoundingClientRect();
+      const maxPanX = (scale - 1) * rect.width / 2;
+      const maxPanY = (scale - 1) * rect.height / 2;
+
+      const newX = e.clientX - dragStart.x;
+      const newY = e.clientY - dragStart.y;
+
+      setPosition({
+        x: Math.max(-maxPanX, Math.min(maxPanX, newX)),
+        y: Math.max(-maxPanY, Math.min(maxPanY, newY))
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
   };
 
   return (
-    <div className="relative group">
+    <div 
+      className="relative group"
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+      onMouseMove={handleMouseMove}
+    >
       {/* Regular image with hover controls */}
       <div className="relative inline-block">
-    {/* <div className="flex justify-end">
-    <button
-            onClick={toggleFullscreen}
-            className="p-2 bg-black/50 rounded-full text-white 
-                     transition-all duration-200 ease-in-out
-                     hover:bg-black/70 hover:scale-110
-                     shadow-lg backdrop-blur-sm"
-            title="Maximize"
-          >
-            <Maximize2 size={24} />
-          </button>
-    </div> */}
-    
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 p-1">
-        <img
-          src={src}
-          alt={alt}
-          className={`max-w-full h-auto rounded-lg ${
-            !isFullscreen ? 'cursor-pointer' : ''
-          }`}
-          {...props}
-        />
-        {!isFullscreen && (
-          <button
-            onClick={toggleFullscreen}
-            className="absolute top-2 right-2 p-2 bg-black/50 rounded-full 
-                     text-white " 
-          >
-            <Maximize2 size={20} />
-          </button>
-        )}
+        <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 p-1">
+          <img
+            src={src}
+            alt={alt}
+            className={`max-w-full h-auto rounded-lg ${
+              !isFullscreen ? 'cursor-pointer' : ''
+            }`}
+            {...props}
+          />
+          {!isFullscreen && (
+            <button
+              onClick={toggleFullscreen}
+              className="absolute top-2 right-2 p-2 bg-black/50 rounded-full 
+                       text-white" 
+            >
+              <Maximize2 size={20} />
+            </button>
+          )}
         </div>
       </div>
 
@@ -123,65 +155,70 @@ const ImageWithFullscreen = ({ src, alt, ...props }) => {
           </button>
           
           <img
+            ref={imageRef}
             src={src}
             alt={alt}
-           className="max-h-[90vh] max-w-[90vw] object-contain
-                         animate-scaleIn cursor-zoom-in"
+            onMouseDown={handleMouseDown}
+            className={`max-h-[90vh] max-w-[90vw] object-contain
+                         animate-scaleIn cursor-grab
+                         ${isDragging ? 'cursor-grabbing' : ''}`}
             onClick={(e) => e.stopPropagation()}
             style={{
-              transform: `scale(${scale})`,
+              transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`,
+              transformOrigin: 'center center',
               transition: 'transform 0.2s ease-in-out'
             }}
           />
   
-             {/* Zoom level indicator */}
-             <div 
-                className="absolute bottom-4 left-1/2 transform -translate-x-1/2
-                         bg-black/50 text-white px-3 py-1 rounded-full
-                         text-sm backdrop-blur-sm "
+          {/* Zoom level indicator and controls */}
+          <div 
+            className="absolute bottom-4 left-1/2 transform -translate-x-1/2
+                       bg-black/50 text-white px-3 py-1 rounded-full
+                       text-sm backdrop-blur-sm"
+          >
+            <center>{Math.round(scale * 100)}%</center>
+            <div className="flex gap-2">
+              <button
+                onClick={handleZoomIn}
+                disabled={scale >= 3}
+                className={`p-2 bg-black/50 rounded-full text-white 
+                         transition-all duration-200 ease-in-out
+                         hover:bg-black/70 hover:scale-110
+                         shadow-lg backdrop-blur-sm
+                         ${scale >= 3 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                title="Zoom In"
               >
-             <center>   {Math.round(scale * 100)}%</center>
-                <div className="flex gap-2">
-          <button
-              onClick={handleZoomIn}
-              disabled={scale >= 3}
-              className={`p-2 bg-black/50 rounded-full text-white 
-                       transition-all duration-200 ease-in-out
-                       hover:bg-black/70 hover:scale-110
-                       shadow-lg backdrop-blur-sm
-                       ${scale >= 3 ? 'opacity-50 cursor-not-allowed' : ''}`}
-              title="Zoom In"
-            >
-              <ZoomIn size={24} />
-            </button>
-            
-            <button
-              onClick={handleZoomOut}
-              disabled={scale <= 0.5}
-              className={`p-2 bg-black/50 rounded-full text-white 
-                       transition-all duration-200 ease-in-out
-                       hover:bg-black/70 hover:scale-110
-                       shadow-lg backdrop-blur-sm
-                       ${scale <= 0.5 ? 'opacity-50 cursor-not-allowed' : ''}`}
-              title="Zoom Out"
-            >
-              <ZoomOut size={24} />
-            </button>
-            
-            <button
-              onClick={resetZoom}
-              disabled={scale === 1}
-              className={`p-2 bg-black/50 rounded-full text-white 
-                       transition-all duration-200 ease-in-out
-                       hover:bg-black/70 hover:scale-110
-                       shadow-lg backdrop-blur-sm
-                       ${scale === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
-              title="Reset Zoom"
-            >
-              <RotateCcw size={24} />
-            </button>
+                <ZoomIn size={24} />
+              </button>
+              
+              <button
+                onClick={handleZoomOut}
+                disabled={scale <= 0.5}
+                className={`p-2 bg-black/50 rounded-full text-white 
+                         transition-all duration-200 ease-in-out
+                         hover:bg-black/70 hover:scale-110
+                         shadow-lg backdrop-blur-sm
+                         ${scale <= 0.5 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                title="Zoom Out"
+              >
+                <ZoomOut size={24} />
+              </button>
+              
+              <button
+                onClick={resetZoom}
+                disabled={scale === 1 && position.x === 0 && position.y === 0}
+                className={`p-2 bg-black/50 rounded-full text-white 
+                         transition-all duration-200 ease-in-out
+                         hover:bg-black/70 hover:scale-110
+                         shadow-lg backdrop-blur-sm
+                         ${scale === 1 && position.x === 0 && position.y === 0 
+                           ? 'opacity-50 cursor-not-allowed' : ''}`}
+                title="Reset Zoom"
+              >
+                <RotateCcw size={24} />
+              </button>
             </div>
-              </div>
+          </div>
         </div>
       )}
     </div>
