@@ -42,7 +42,69 @@ SyntaxHighlighter.registerLanguage("markdown", markdown);
 SyntaxHighlighter.registerLanguage("json", json);
 SyntaxHighlighter.registerLanguage("yaml", yaml);
 
+import { Maximize2, X } from 'lucide-react';
+
+const ImageWithFullscreen = ({ src, alt, ...props }) => {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = (e) => {
+    e.stopPropagation();
+    setIsFullscreen(!isFullscreen);
+  };
+
+  return (
+    <div className="relative group">
+      {/* Regular image with hover controls */}
+      <div className="relative inline-block">
+        <img
+          src={src}
+          alt={alt}
+          className={`max-w-full h-auto rounded-lg ${
+            !isFullscreen ? 'cursor-pointer' : ''
+          }`}
+          {...props}
+        />
+        {!isFullscreen && (
+          <button
+            onClick={toggleFullscreen}
+            className="absolute top-2 right-2 p-2 bg-black/50 rounded-full 
+                     text-white opacity-0 group-hover:opacity-100 transition-opacity
+                     hover:bg-black/70"
+          >
+            <Maximize2 size={20} />
+          </button>
+        )}
+      </div>
+
+      {/* Fullscreen overlay */}
+      {isFullscreen && (
+        <div
+          className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
+          onClick={toggleFullscreen}
+        >
+          <button
+            onClick={toggleFullscreen}
+            className="absolute top-4 right-4 p-2 bg-black/50 rounded-full 
+                     text-white hover:bg-black/70"
+          >
+            <X size={24} />
+          </button>
+          
+          <img
+            src={src}
+            alt={alt}
+            className="max-h-[90vh] max-w-[90vw] object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+
 const components = {
+  img: ImageWithFullscreen,
   Box: (props) => <div {...props} />,
   pre: (props) => <div {...props} />,
   code: ({ inline, className, ...props }) => {
