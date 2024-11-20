@@ -87,6 +87,7 @@ const ImageWithFullscreen = ({ src, alt, ...props }) => {
             <Maximize2 size={24} />
           </button>
     </div> */}
+    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 p-1">
         <img
           src={src}
           alt={alt}
@@ -99,12 +100,12 @@ const ImageWithFullscreen = ({ src, alt, ...props }) => {
           <button
             onClick={toggleFullscreen}
             className="absolute top-2 right-2 p-2 bg-black/50 rounded-full 
-                     text-white opacity-0 group-hover:opacity-100 transition-opacity
-                     hover:bg-black/70"
+                     text-white " 
           >
             <Maximize2 size={20} />
           </button>
         )}
+        </div>
       </div>
 
       {/* Fullscreen overlay */}
