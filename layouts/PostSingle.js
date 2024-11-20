@@ -28,7 +28,7 @@ import markdown from "react-syntax-highlighter/dist/cjs/languages/prism/markdown
 import json from "react-syntax-highlighter/dist/cjs/languages/prism/json";
 import lua from "react-syntax-highlighter/dist/cjs/languages/prism/lua";
 import yaml from "react-syntax-highlighter/dist/cjs/languages/prism/yaml";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 import DocumentDuplicateIcon from "@heroicons/react/24/outline/DocumentDuplicateIcon";
 
@@ -42,10 +42,29 @@ SyntaxHighlighter.registerLanguage("markdown", markdown);
 SyntaxHighlighter.registerLanguage("json", json);
 SyntaxHighlighter.registerLanguage("yaml", yaml);
 
-import { Maximize2, X } from 'lucide-react';
+import { Maximize2, RotateCcw, X, ZoomIn, ZoomOut } from 'lucide-react';
+
+
 
 const ImageWithFullscreen = ({ src, alt, ...props }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [scale, setScale] = useState(1);
+  const imageRef = useRef(null)
+
+   const handleZoomIn = (e) => {
+    e.stopPropagation();
+    setScale(prev => Math.min(prev + 0.25, 3)); // Max zoom 3x
+  };
+
+  const handleZoomOut = (e) => {
+    e.stopPropagation();
+    setScale(prev => Math.max(prev - 0.25, 0.5)); // Min zoom 0.5x
+  };
+
+  const resetZoom = (e) => {
+    e.stopPropagation();
+    setScale(1);
+  };
 
   const toggleFullscreen = (e) => {
     e.stopPropagation();
@@ -95,7 +114,60 @@ const ImageWithFullscreen = ({ src, alt, ...props }) => {
             alt={alt}
             className="max-h-[90vh] max-w-[90vw] object-contain"
             onClick={(e) => e.stopPropagation()}
+            style={{
+              transform: `scale(${scale})`,
+              transformOrigin: 'center center',
+            }}
           />
+  
+             {/* Zoom level indicator */}
+             <div 
+                className="absolute bottom-4 left-1/2 transform -translate-x-1/2
+                         bg-black/50 text-white px-3 py-1 rounded-full
+                         text-sm backdrop-blur-sm"
+              >
+                {Math.round(scale * 100)}%
+                <div className="flex gap-2">
+          <button
+              onClick={handleZoomIn}
+              disabled={scale >= 3}
+              className={`p-2 bg-black/50 rounded-full text-white 
+                       transition-all duration-200 ease-in-out
+                       hover:bg-black/70 hover:scale-110
+                       shadow-lg backdrop-blur-sm
+                       ${scale >= 3 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              title="Zoom In"
+            >
+              <ZoomIn size={24} />
+            </button>
+            
+            <button
+              onClick={handleZoomOut}
+              disabled={scale <= 0.5}
+              className={`p-2 bg-black/50 rounded-full text-white 
+                       transition-all duration-200 ease-in-out
+                       hover:bg-black/70 hover:scale-110
+                       shadow-lg backdrop-blur-sm
+                       ${scale <= 0.5 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              title="Zoom Out"
+            >
+              <ZoomOut size={24} />
+            </button>
+            
+            <button
+              onClick={resetZoom}
+              disabled={scale === 1}
+              className={`p-2 bg-black/50 rounded-full text-white 
+                       transition-all duration-200 ease-in-out
+                       hover:bg-black/70 hover:scale-110
+                       shadow-lg backdrop-blur-sm
+                       ${scale === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              title="Reset Zoom"
+            >
+              <RotateCcw size={24} />
+            </button>
+            </div>
+              </div>
         </div>
       )}
     </div>
