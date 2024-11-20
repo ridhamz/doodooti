@@ -75,6 +75,18 @@ const ImageWithFullscreen = ({ src, alt, ...props }) => {
     <div className="relative group">
       {/* Regular image with hover controls */}
       <div className="relative inline-block">
+    {/* <div className="flex justify-end">
+    <button
+            onClick={toggleFullscreen}
+            className="p-2 bg-black/50 rounded-full text-white 
+                     transition-all duration-200 ease-in-out
+                     hover:bg-black/70 hover:scale-110
+                     shadow-lg backdrop-blur-sm"
+            title="Maximize"
+          >
+            <Maximize2 size={24} />
+          </button>
+    </div> */}
         <img
           src={src}
           alt={alt}
@@ -112,11 +124,12 @@ const ImageWithFullscreen = ({ src, alt, ...props }) => {
           <img
             src={src}
             alt={alt}
-            className="max-h-[90vh] max-w-[90vw] object-contain"
+           className="max-h-[90vh] max-w-[90vw] object-contain
+                         animate-scaleIn cursor-zoom-in"
             onClick={(e) => e.stopPropagation()}
             style={{
               transform: `scale(${scale})`,
-              transformOrigin: 'center center',
+              transition: 'transform 0.2s ease-in-out'
             }}
           />
   
