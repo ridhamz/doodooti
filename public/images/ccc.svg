@@ -8,19 +8,19 @@
     <!-- AWS -->
     <g transform="translate(-500, 0)">
       <path d="M-40,-40 L40,-40 L40,40 L-40,40 Z" fill="#FF9900" opacity="0.9"/>
-      <text x="0" y="60" font-family="Arial, sans-serif" font-size="16" fill="#000000" text-anchor="middle">AWS</text>
+      <text x="0" y="70" font-family="Arial, sans-serif" font-size="30" fill="#000000" text-anchor="middle">AWS</text>
     </g>
     
     <!-- JavaScript -->
     <g transform="translate(-300, 0)">
       <rect x="-40" y="-40" width="80" height="80" fill="#F7DF1E" opacity="0.9"/>
-      <text x="0" y="60" font-family="Arial, sans-serif" font-size="16" fill="#000000" text-anchor="middle">JavaScript</text>
+      <text x="0" y="70" font-family="Arial, sans-serif" font-size="30" fill="#000000" text-anchor="middle">JavaScript</text>
     </g>
     
     <!-- TypeScript -->
     <g transform="translate(-100, 0)">
       <rect x="-40" y="-40" width="80" height="80" fill="#007ACC" opacity="0.9"/>
-      <text x="0" y="60" font-family="Arial, sans-serif" font-size="16" fill="#000000" text-anchor="middle">TypeScript</text>
+      <text x="0" y="70" font-family="Arial, sans-serif" font-size="30" fill="#000000" text-anchor="middle">TypeScript</text>
     </g>
     
     <!-- Architecture -->
@@ -31,24 +31,24 @@
         <line x1="-40" y1="-40" x2="40" y2="40" stroke="#6C48B0" stroke-width="4"/>
         <line x1="-40" y1="40" x2="40" y2="-40" stroke="#6C48B0" stroke-width="4"/>
       </g>
-      <text x="0" y="60" font-family="Arial, sans-serif" font-size="16" fill="#000000" text-anchor="middle">Architecture</text>
+      <text x="0" y="70" font-family="Arial, sans-serif" font-size="30" fill="#000000" text-anchor="middle">Architecture</text>
     </g>
     
     <!-- Node.js -->
     <g transform="translate(300, 0)">
       <rect x="-40" y="-40" width="80" height="80" fill="#339933" opacity="0.9"/>
-      <text x="0" y="60" font-family="Arial, sans-serif" font-size="16" fill="#000000" text-anchor="middle">Node.js</text>
+      <text x="0" y="70" font-family="Arial, sans-serif" font-size="30" fill="#000000" text-anchor="middle">Node.js</text>
     </g>
     
     <!-- React -->
     <g transform="translate(500, 0)">
       <circle cx="0" cy="0" r="40" fill="#61DAFB" opacity="0.9"/>
-      <text x="0" y="60" font-family="Arial, sans-serif" font-size="16" fill="#000000" text-anchor="middle">React</text>
+      <text x="0" y="70" font-family="Arial, sans-serif" font-size="30" fill="#000000" text-anchor="middle">React</text>
     </g>
   </g>
   
   <!-- Main Title - Reduced font size to 35 -->
-  <text x="792" y="340" font-family="Arial, sans-serif" font-size="35" fill="#000000" text-anchor="middle" font-weight="bold">
+  <text x="792" y="340" font-family="Arial, sans-serif" font-size="40" fill="#000000" text-anchor="middle" font-weight="bold">
       Building scalable solutions with modern technologies
   </text>
   
