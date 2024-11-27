@@ -1,6 +1,6 @@
 ---
 title: Optimizing S3 File Uploads with NodeJS
-date: 2024-11-26T01:00:00Z
+date: 2024-11-27T01:00:00Z
 image: /images/posts/s3-data-send/0.png
 categories: ["AWS", "S3", "NodeJS"]
 featured: true
@@ -383,8 +383,8 @@ for (let partNumber = 1; partNumber <= numberOfParts; partNumber++) {
 ```js
 async function main() {
   const options = {
-    accessKeyId: "AKIAYD4NSHJKLSQ5EN2MZKIOPYWI",
-    secretAccessKey: "UOEZL6epEAHGT2XKNNHROV+tzarFNLTP3gUxKKIHGFSSDDS1V3bPNh",
+    accessKeyId: "Your accessKeyId",
+    secretAccessKey: "Your secretAccessKey",
     useTransferAcceleration: true,
   };
 
@@ -412,6 +412,6 @@ main();
   This example demonstrates how to implement these features in a <strong>Node.js application</strong>, 
   ensuring your uploads are <strong>fast</strong> and <strong>reliable</strong>.
 </p>
- <p>Github Repo : https://github.com/ridhamz/nodejs-s3-files-uploads </p>
+ <p>Code : https://github.com/ridhamz/nodejs-s3-files-uploads </p>
   </div>
 </div>
