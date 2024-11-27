@@ -1,0 +1,417 @@
+---
+title: Optimizing S3 File Uploads with NodeJS
+date: 2024-11-26T01:00:00Z
+image: /images/posts/s3-data-send/0.png
+categories: ["AWS", "S3", "NodeJS"]
+featured: true
+draft: false
+---
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Introduction</h3>
+  <div style={{ padding: "5px" }}>
+ <p>
+  When dealing with <strong>large file uploads</strong>, <strong>efficiency</strong> and <strong>speed</strong> are crucial. 
+  AWS S3 provides two powerful features to help with this: <strong>Multipart Upload</strong> and <strong>Transfer Acceleration</strong>. 
+  In this blog post, we'll explore how to use these features with <strong>Node.js</strong> to optimize your <strong>file upload process</strong>.
+</p>
+ </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>What is Multipart Upload?</h3>
+  <div style={{ padding: "5px" }}>
+  <p>
+  <strong>Multipart upload</strong> lets you break a large file into smaller, manageable parts and upload them individually.
+   Each part uploads independently, often in <strong>parallel</strong>, which can drastically speed up the process. 
+   If any part fails, you only need to retry that specific part, saving you from starting the entire upload over again.
+</p>
+
+  <img src="/images/posts/s3-data-send/1.png" style={{ marginTop: "5px" }} />
+
+  <p>
+  You should use <strong>multipart upload</strong> when working with <strong>large files</strong> that exceed the <strong>5 GB</strong> limit for a single upload in AWS S3. Multipart upload is ideal for files that are too large to upload in a single request or when uploads might take a long time. By splitting the file into smaller parts (each part can range from <strong>5 MB to 5 GB</strong>), you can <strong>improve upload speed</strong> and handle failures more efficiently. In case of a failure, only the specific part needs to be retried, and you can even upload parts in <strong>parallel</strong> for better performance.
+</p>
+
+ </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>What is Transfer Acceleration?</h3>
+  <div style={{ padding: "5px" }}>
+   <p>
+  <strong>Transfer Acceleration</strong> uses Amazon CloudFront's globally distributed edge locations to speed up uploads to S3. 
+  This feature helps to <strong>reduce latency</strong> and significantly <strong>improve upload speeds</strong>, 
+  making it especially beneficial for users located far from the S3 bucket's region.
+</p>
+
+  </div>
+    <img src="/images/posts/s3-data-send/2.png" style={{ marginTop: "5px" }} />
+    <p><strong>Transfer Acceleration</strong> works by routing traffic through the nearest <strong>edge location</strong>, reducing <strong>latency</strong> and improving <strong>upload speeds</strong>. You can use <strong>Transfer Acceleration</strong> when you need to upload large files quickly from remote locations, or when you have users distributed <strong>globally</strong>. However, it's important to note that <strong>Transfer Acceleration</strong> comes at an additional <strong>cost</strong>. The pricing depends on the <strong>data transfer amount</strong>, with higher costs for longer distances between the client and the bucket. It’s best to use this feature when faster upload speeds justify the extra cost, particularly for <strong>time-sensitive</strong> or <strong>large-scale uploads</strong>.</p>
+
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>From Concept to Execution</h3>
+  <div style={{ padding: "5px" }}>
+<p>
+  In this post, I’ll show you how to create a <strong>Node.js service</strong> that makes it easy to upload <strong>large files</strong>. We’ll use <strong>multipart upload</strong>, add an option for <strong>Transfer Acceleration</strong>, and include a <strong>retry feature</strong> to handle any parts that fail.
+</p>
+
+  <img src="/images/posts/s3-data-send/3.png" style={{ marginTop: "5px" }} />
+ 
+ </div>
+</div>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Setting Up</h3>
+  <div style={{ padding: "5px" }}>
+   <p>First, create a folder named S3-Upload-Service and install the Node.js AWS SDK, if it isn't already installed</p>
+ </div>
+</div>
+
+```cmd
+mkdir S3-Upload-Service
+cd S3-Upload-Service
+npm init
+npm install @aws-sdk/client-s3
+```
+
+<div style={{ marginTop: "20px" }}>
+  <div style={{ padding: "5px" }}>
+   <p>
+  The AWS SDK is used to interact with AWS services and make API calls from your application.
+  However, it requires proper configuration, including providing credentials, to authenticate and grant access to AWS resources.
+   </p>
+     <p>
+       To configure the credentials, you simply need to create an IAM user and obtain the access and secret keys. These keys will be used by the SDK when making API calls. 
+       Keep in mind that the SDK's access is limited by the permissions assigned to the IAM user.
+     </p>
+      <p>
+  Now that our environment is set up, we can begin implementing the code logic. Let's start by creating a file named <strong>index.js</strong> and adding the following code:
+</p>
+ </div>
+</div>
+
+```js
+// index.js
+const {
+  S3Client,
+  CreateMultipartUploadCommand,
+  UploadPartCommand,
+  CompleteMultipartUploadCommand,
+} = require("@aws-sdk/client-s3");
+
+const fs = require("fs");
+const path = require("path");
+
+class S3MultipartUploader {
+  constructor(region = "us-east-1", accessKeyId, secretAccessKey) {
+    this.s3Client = new S3Client({
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+      },
+      region,
+    });
+  }
+  
+  // this function will contain the upload logic
+  async uploadFile(filePath, bucketName) {}
+}
+```
+<div style={{ marginTop: "20px" }}>
+  <div style={{ padding: "5px" }}>
+<p>
+  The code above defines a class designed to manage file uploads to S3. By creating an instance of this class, 
+  you can call the <strong>uploadFile</strong> function, which will handle the upload logic. 
+  The configuration for the AWS SDK is managed in the constructor, where essential details such as 
+  <strong>region</strong>, <strong>accessKeyId</strong>, and <strong>secretAccessKey</strong> are provided.
+</p>
+<p>
+  Now it’s time for the best part: implementing the <strong>uploadFile</strong> function
+</p>
+  </div>
+</div>
+
+```js
+ async uploadFile(filePath, bucketName) {
+    try{
+      // File details
+      const fileSize = fs.statSync(filePath).size;
+      const fileName = path.basename(filePath);
+
+      // Multipart upload configuration
+      let partSize = 5 * 1024 * 1024; // 5 MB per part
+      const numberOfParts = Math.ceil(fileSize / partSize);
+
+      // Initiate multipart upload
+      
+     // Upload parts
+
+    // Wait for all parts to upload
+
+    // Sort parts to ensure correct order
+
+    // Complete multipart upload
+
+    }catch (error) {
+      console.error("Error during multipart upload:", error);
+      throw error;
+    }
+  }
+```
+
+<div style={{ marginTop: "20px" }}>
+  <div style={{ padding: "5px" }}>
+  <p>
+  This code determines the <strong>file size</strong> and <strong>name</strong>, configures each upload part to be <strong>5 MB</strong> (the min size file need to be 5M), and calculates the <strong>number of parts</strong> needed.
+</p>
+<p>Next, we will go through the remaining steps outlined in the code snippet using comments, explaining each one in detail starting by the <strong>Initiate multipart upload</strong>.</p>
+  </div>
+</div>
+
+```js
+// Initiate multipart upload
+const multipartUpload = await this.s3Client.send(
+  new CreateMultipartUploadCommand({
+    Bucket: bucketName,
+    Key: fileName,
+  })
+);
+
+console.log(`Multipart upload initiated for ${fileName}`);
+
+```
+
+<div style={{ marginTop: "20px" }}>
+<div style={{ padding: "5px" }}>
+  <p><strong>CreateMultipartUploadCommand</strong> is used to initiate a multipart upload to an S3 bucket.</p>
+  <p>It starts the upload process and returns an <strong>UploadId</strong> needed for uploading parts.</p>
+  <p>This command is useful for efficiently uploading <strong>large files</strong> in smaller parts.</p>
+  <p>It helps in resuming uploads and managing file uploads in <strong>parallel</strong> that's why we will use it in the next steps.</p>
+</div>
+</div>
+
+```js
+// Upload parts
+const uploadPromises = [];
+const uploadedParts = [];
+
+for (let partNumber = 1; partNumber <= numberOfParts; partNumber++) {
+  const start = (partNumber - 1) * partSize;
+  const end = Math.min(start + partSize, fileSize);
+  partSize = end - start;
+
+  const uploadPromise = new Promise((resolve, reject) => {
+    const readStream = fs.createReadStream(filePath, {
+      start,
+      end: end - 1,
+    });
+
+    this.s3Client
+      .send(
+        new UploadPartCommand({
+          Bucket: bucketName,
+          Key: fileName,
+          PartNumber: partNumber,
+          UploadId: multipartUpload.UploadId,
+          Body: readStream,
+        })
+      )
+      .then((uploadPartResult) => {
+        uploadedParts.push({
+          ETag: uploadPartResult.ETag,
+          PartNumber: partNumber,
+        });
+        resolve();
+      })
+      .catch(reject);
+  });
+
+  uploadPromises.push(uploadPromise);
+}
+
+```
+<div style={{ marginTop: "20px" }}>
+<div style={{ padding: "5px" }}>
+<p>The code above divides the file into parts, each of size 5MB, using the <strong>fs.createReadStream</strong> function, a built-in Node.js method and creates a <strong>Promise</strong> for uploading a part of a file to S3 using the <strong>UploadPartCommand</strong>.</p>
+<p>A <strong>readStream</strong> is created using the <strong>fs.createReadStream</strong> function, which reads a specific range of the file defined by <strong>start</strong> and <strong>end</strong> values.</p>
+<p>The <strong>UploadPartCommand</strong> is then sent to S3 with the <strong>Bucket</strong> name, <strong>file name (Key)</strong>, <strong>PartNumber</strong>, <strong>UploadId</strong>, and the <strong>Body</strong> (which is the read stream). Once the part is uploaded, its <strong>ETag</strong> and <strong>PartNumber</strong> are pushed into the <strong>uploadedParts</strong> array to track the upload status.</p>
+<p>The <strong>uploadPromise</strong> is added to an array of promises <strong>uploadPromises</strong> to manage multiple part uploads concurrently.</p>
+<p><strong>Note:</strong> We are creating multiple promises that will be executed in parallel in the next step.</p>
+</div>
+</div>
+
+```js
+// Wait for all parts to upload
+await Promise.all(uploadPromises);
+
+// Sort parts to ensure correct order
+uploadedParts.sort((a, b) => a.PartNumber - b.PartNumber);
+```
+<div style={{ marginTop: "20px" }}>
+<div style={{ padding: "5px" }}>
+<p>After all parts are uploaded, we need to sort them because the upload process is parallel, and any part may finish before another. The sorted parts will then be used to complete the multipart upload process in the next step.</p>
+</div>
+</div>
+
+```js
+// Complete multipart upload
+const completeMultipartUploadResult = await this.s3Client.send(
+  new CompleteMultipartUploadCommand({
+    Bucket: bucketName,
+    Key: fileName,
+    UploadId: multipartUpload.UploadId,
+    MultipartUpload: { Parts: uploadedParts },
+  })
+);
+
+console.log(
+  "File uploaded successfully:",
+  completeMultipartUploadResult.Location
+);
+return completeMultipartUploadResult;
+```
+
+<div style={{ marginTop: "20px" }}>
+<div style={{ padding: "5px" }}>
+<p>In this step, we inform S3 that all parts have been uploaded, so it can complete the multipart upload process by providing the <strong>ETag</strong> and <strong>PartNumber</strong> for each uploaded part.</p>
+<p>At this point, we are good, but we need to add a retry mechanism that will be executed if any part fails. We begin by adding a new function called <strong>retry</strong> inside the class.</p>
+</div>
+</div>
+
+```js
+ async retry(fn, args, retryCount = 0) {
+    try {
+      return await fn(...args);
+    } catch (error) {
+      if (retryCount < 3) {
+        console.log(`Attempt ${retryCount + 1} failed. Retrying...`);
+        await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount))); // Exponential backoff
+        return this.retry(fn, args, retryCount + 1);
+      }
+      throw error;
+    }
+  }
+ ```
+
+<div style={{ marginTop: "20px" }}>
+<div style={{ padding: "5px" }}>
+<p>The retry function will attempt to upload a file up to three times if the upload fails, using the Exponential Backoff technique. 
+After implementing this function, we will need to update the upload parts step accordingly.</p>
+</div>
+</div>
+
+```js
+ // Upload parts
+const uploadPromises = [];
+const uploadedParts = [];
+
+for (let partNumber = 1; partNumber <= numberOfParts; partNumber++) {
+  const start = (partNumber - 1) * partSize;
+  const end = Math.min(start + partSize, fileSize);
+  partSize = end - start;
+
+  const uploadPromise = new Promise((resolve, reject) => {
+    const readStream = fs.createReadStream(filePath, {
+      start,
+      end: end - 1,
+    });
+
+    // Upload part with retry mechanism
+    this.retry(this.s3Client.send.bind(this.s3Client), [
+      new UploadPartCommand({
+        Bucket: bucketName,
+        Key: fileName,
+        PartNumber: partNumber,
+        UploadId: multipartUpload.UploadId,
+        Body: readStream,
+      }),
+    ])
+      .then((uploadPartResult) => {
+        uploadedParts.push({
+          ETag: uploadPartResult.ETag,
+          PartNumber: partNumber,
+        });
+        resolve();
+      })
+      .catch(reject);
+  });
+
+  uploadPromises.push(uploadPromise);
+}
+ ```
+
+<div style={{ marginTop: "20px" }}>
+<div style={{ padding: "5px" }}>
+<p>With this, we can say that our <strong>uploadFile</strong> function supports the <strong>retry mechanism</strong> if any part fails.
+ The last thing we need to add is the ability to use <strong>S3 Transfer Acceleration</strong>.</p>
+<p>To use <strong>S3 Transfer Acceleration</strong>, we need to update the <strong>constructor</strong> since this functionality is optional. A variable must be passed to indicate whether the class should enable it.
+ Additionally, you need to activate the transfer acceleration feature for your bucket in the AWS Management Console. Without enabling this feature, it will not work.</p>
+</div>
+</div>
+
+```js
+    constructor(region = 'us-east-1', options = {}) {
+        const { 
+          accessKeyId, 
+          secretAccessKey, 
+          useTransferAcceleration 
+        } = options;
+    
+        const clientConfig = {
+          credentials: {
+            accessKeyId: accessKeyId,
+            secretAccessKey: secretAccessKey
+          },
+          region: region,
+          useAccelerateEndpoint: useTransferAcceleration,
+        };
+    
+        this.s3Client = new S3Client(clientConfig);
+    }
+ ```
+
+ <div style={{ marginTop: "20px" }}>
+<div style={{ padding: "5px" }}>
+<p>After all this effort, we can confidently say that all the steps are complete, and our multipart upload is ready to use. Now, let's test it and observe the results!</p>
+</div>
+</div>
+
+
+```js
+async function main() {
+  const options = {
+    accessKeyId: "AKIAYD4NSHJKLSQ5EN2MZKIOPYWI",
+    secretAccessKey: "UOEZL6epEAHGT2XKNNHROV+tzarFNLTP3gUxKKIHGFSSDDS1V3bPNh",
+    useTransferAcceleration: true,
+  };
+
+  // Create uploader with transfer acceleration
+  const uploader = new S3MultipartUploader("eu-central-1", options);
+  await uploader.uploadFile(
+    "TestFile.pdf", // Local file path with a size of 5.8 MB
+    "doodooti" // S3 Bucket Name
+  );
+}
+
+main();
+```
+
+<center><img src="/images/posts/s3-data-send/4.png" style={{ marginTop: "5px" }} /></center>
+<center><small>It works 💥 </small></center>
+<center><img src="/images/posts/s3-data-send/5.png" style={{ marginTop: "5px" }} /></center>
+
+<div style={{ marginTop: "20px" }}>
+  <h3>Conclusion</h3>
+  <div style={{ padding: "5px" }}>
+<p>
+  Using AWS S3's <strong>multipart upload</strong> and <strong>transfer acceleration</strong> features can greatly
+  enhance the <strong>efficiency</strong> and <strong>speed</strong> of your file uploads. 
+  This example demonstrates how to implement these features in a <strong>Node.js application</strong>, 
+  ensuring your uploads are <strong>fast</strong> and <strong>reliable</strong>.
+</p>
+ <p>Github Repo : https://github.com/ridhamz/nodejs-s3-files-uploads </p>
+  </div>
+</div>
